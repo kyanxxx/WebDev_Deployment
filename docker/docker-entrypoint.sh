@@ -38,7 +38,14 @@ if [ ! -f config/jwt/private.pem ]; then
     php bin/console lexik:jwt:generate-keypair --skip-if-exists
 fi
 
-php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
+# Fresh Railway DBs: skip failed seed if an old mis-ordered migration was recorded
+if php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration; then
+    echo "Migrations applied successfully."
+else
+    echo "Migration failed; removing obsolete Version20250110000001 if present and retrying..."
+    php bin/console doctrine:query:sql "DELETE FROM doctrine_migration_versions WHERE version LIKE '%Version20250110000001%'" 2>/dev/null || true
+    php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
+fi
 
 if [ "$APP_ENV" = "prod" ]; then
     php bin/console cache:clear --no-warmup
