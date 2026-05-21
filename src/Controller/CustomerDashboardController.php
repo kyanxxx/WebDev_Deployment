@@ -32,7 +32,7 @@ class CustomerDashboardController extends AbstractController
                     ['name' => 'Caramel Macchiato', 'price' => 5.20, 'image' => 'caramel-macchiato.jpg', 'description' => 'Rich espresso layered with vanilla and caramel.'],
                     ['name' => 'Mocha', 'price' => 4.80, 'image' => 'mocha.jpg', 'description' => 'Espresso with chocolate and steamed milk.'],
                     ['name' => 'Cappuccino', 'price' => 4.00, 'image' => 'cappuccino.jpg', 'description' => 'Espresso topped with steamed milk foam.'],
-                    ['name' => 'Americano', 'price' => 3.80, 'image' => 'americano.jpg', 'description' => 'Smooth espresso diluted with hot water.'],
+                    ['name' => 'Americano', 'price' => 3.80, 'image' => 'Americano.jpg', 'description' => 'Smooth espresso diluted with hot water.'],
                     ['name' => 'Frappuccino', 'price' => 5.50, 'image' => 'frappuccino.jpg', 'description' => 'Blended iced coffee with sweet whipped cream.'],
                     ['name' => 'Vanilla Latte', 'price' => 4.70, 'image' => 'vanilla-latte.jpg', 'description' => 'Espresso mixed with steamed milk and vanilla syrup.'],
                     ['name' => 'Hazelnut Cold Brew', 'price' => 5.10, 'image' => 'hazelnut-coldbrew.jpg', 'description' => 'Chilled slow-brew coffee with hazelnut flavor.'],
