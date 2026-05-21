@@ -1,0 +1,189 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Orders - Cafe Dashboard{% endblock %}
+
+{% block page_title %}Orders Management{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .orders-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 0 10px;
+            width: 100%;
+        }
+
+        .orders-header h1 {
+            font-size: 32px;
+            color: #3E2723;
+            margin: 0;
+            font-weight: 600;
+            flex: 0 0 auto;
+        }
+
+        .table-card {
+            background: white;
+            border: 2px solid #8B5A3C;
+            border-radius: 12px;
+            padding: 30px;
+            overflow-x: auto;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: none;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 16px;
+            table-layout: fixed;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #8B5A3C 0%, #6B4423 100%);
+            color: white;
+        }
+
+        thead th {
+            padding: 20px 18px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        thead th:first-child {
+            border-top-left-radius: 8px;
+        }
+
+        thead th:last-child {
+            border-top-right-radius: 8px;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #e0e0e0;
+            transition: background-color 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        tbody td {
+            padding: 18px;
+            color: #333;
+            font-size: 15px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        tbody td:first-child {
+            font-weight: 600;
+            color: #8B5A3C;
+            font-size: 16px;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-pending {
+            background-color: #FF9800;
+            color: white;
+        }
+
+        .badge-completed {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .badge-cancelled {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #999;
+            font-style: italic;
+            padding: 40px !important;
+        }
+
+        /* Column widths */
+        thead th:nth-child(1) { width: 10%; }
+        thead th:nth-child(2) { width: 30%; }
+        thead th:nth-child(3) { width: 15%; }
+        thead th:nth-child(4) { width: 20%; }
+        thead th:nth-child(5) { width: 25%; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .orders-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .table-card {
+                padding: 10px;
+            }
+
+            thead th, tbody td {
+                padding: 10px;
+                font-size: 12px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block main_content %}
+    <div class="orders-header">
+        <h1>📋 All Orders</h1>
+    </div>
+
+    <div class="table-card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Total Price</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                    <tr>
+                        <td>{{ order.id }}</td>
+                        <td>{{ order.product ? order.product.name : 'N/A' }}</td>
+                        <td>{{ order.quantity }}</td>
+                        <td>${{ order.totalPrice|number_format(2) }}</td>
+                        <td>
+                            <span class="badge badge-{{ order.status|lower }}">
+                                {{ order.status }}
+                            </span>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="no-data">No orders found.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+

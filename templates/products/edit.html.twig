@@ -1,0 +1,298 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Product - Harvey's Cafe{% endblock %}
+
+{% block page_title %}Edit Product{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .product-form-container {
+            width: 100%;
+            padding: 40px;
+            min-height: calc(100vh - 80px);
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 40px 50px;
+            width: 95%; /* Uses 95% of available space */
+            max-width: none; /* Removed max-width constraint */
+            margin: 0 auto;
+        }
+
+        .form-header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .form-header h1 {
+            font-size: 28px;
+            color: #333;
+            margin: 0;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #555;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 15px;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            padding-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+        .delete-form {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #f0f0f0;
+            text-align: right;
+        }
+
+        select.form-control {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 40px;
+        }
+
+        .order-quantity {
+            width: 120px;
+        }
+
+        .order-total-preview {
+            margin-top: 8px;
+            font-size: 15px;
+            color: #333;
+        }
+
+        .order-total-preview strong {
+            color: #28a745;
+            font-size: 18px;
+        }
+    </style>
+    <script>
+        // Product data with prices and descriptions
+        const productData = {
+            'Iced Latte': {
+                price: 4.50,
+                description: 'Cool and creamy espresso with milk over ice.'
+            },
+            'Caramel Macchiato': {
+                price: 5.20,
+                description: 'Rich espresso layered with vanilla and caramel.'
+            },
+            'Mocha': {
+                price: 4.80,
+                description: 'Espresso with chocolate and steamed milk.'
+            },
+            'Cappuccino': {
+                price: 4.00,
+                description: 'Espresso topped with steamed milk foam.'
+            },
+            'Americano': {
+                price: 3.80,
+                description: 'Smooth espresso diluted with hot water.'
+            },
+            'Frappuccino': {
+                price: 5.50,
+                description: 'Blended ice coffee with sweet whipped cream.'
+            },
+            'Vanilla Latte': {
+                price: 4.70,
+                description: 'Espresso mixed with steamed milk and vanilla syrup.'
+            },
+            'Hazelnut Cold Brew': {
+                price: 5.10,
+                description: 'Chilled slow-brew coffee with hazelnut flavor.'
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Try ID first, then fallback to name attribute
+            const productNameSelect = document.getElementById('product_name') || 
+                                      document.querySelector('select[name*="[name]"]');
+            
+            const productPriceInput = document.getElementById('product_price') || 
+                                      document.querySelector('input[name*="[price]"]');
+            
+            const productDescriptionInput = document.getElementById('product_description') || 
+                                             document.querySelector('textarea[name*="[description]"]') || 
+                                             document.querySelector('input[name*="[description]"]');
+
+            const orderQuantityInput = document.getElementById('order_quantity');
+            const orderTotalPreview = document.getElementById('order-total-preview');
+
+            function updateOrderTotalPreview() {
+                if (!orderQuantityInput || !orderTotalPreview || !productPriceInput) {
+                    return;
+                }
+
+                const unitPrice = parseFloat(productPriceInput.value) || 0;
+                const quantity = Math.max(1, parseInt(orderQuantityInput.value, 10) || 1);
+                const total = unitPrice * quantity;
+
+                orderTotalPreview.innerHTML = 'Order total: <strong>$' + total.toFixed(2) + '</strong>'
+                    + (quantity > 1 ? ' <span style="color:#666;">($' + unitPrice.toFixed(2) + ' each × ' + quantity + ')</span>' : '');
+            }
+
+            if (productNameSelect && productPriceInput && productDescriptionInput) {
+                productNameSelect.addEventListener('change', function() {
+                    const selectedProduct = this.value;
+                    
+                    if (selectedProduct && productData[selectedProduct]) {
+                        productPriceInput.value = productData[selectedProduct].price.toFixed(2);
+                        productPriceInput.dispatchEvent(new Event('input', { bubbles: true }));
+                        productDescriptionInput.value = productData[selectedProduct].description;
+                        productDescriptionInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    } else {
+                        productPriceInput.value = '';
+                        productDescriptionInput.value = '';
+                    }
+
+                    updateOrderTotalPreview();
+                });
+            }
+
+            if (productPriceInput) {
+                productPriceInput.addEventListener('input', updateOrderTotalPreview);
+            }
+
+            if (orderQuantityInput) {
+                orderQuantityInput.addEventListener('input', updateOrderTotalPreview);
+                updateOrderTotalPreview();
+            }
+        });
+    </script>
+{% endblock %}
+
+{% block main_content %}
+<div class="product-form-container">
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="flash-message flash-{{ label }}" style="background: {% if label == 'success' %}#d4edda; color: #155724; border: 1px solid #c3e6cb;{% elseif label == 'error' %}#f8d7da; color: #721c24; border: 1px solid #f5c6cb;{% else %}#d1ecf1; color: #0c5460; border: 1px solid #bee5eb;{% endif %} padding: 15px 20px; margin: 20px auto; max-width: 1200px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <span>{% if label != 'success' %}<i class="fas fa-{% if label == 'error' %}exclamation-circle{% else %}info-circle{% endif %}"></i> {% endif %}{{ message }}</span>
+            </div>
+        {% endfor %}
+    {% endfor %}
+    <div class="form-card">
+        <div class="form-header">
+            <h1>✏️ Edit Product</h1>
+        </div>
+
+        {{ form_start(form) }}
+            <div class="form-group">
+                <label for="product_name">Name:</label>
+                {{ form_widget(form.name, {'attr': {'id': 'product_name', 'class': 'form-control', 'placeholder': 'Select a product name'}}) }}
+            </div>
+
+            <div class="form-group">
+                <label for="product_description">Description:</label>
+                {{ form_widget(form.description, {'attr': {'id': 'product_description', 'class': 'form-control', 'placeholder': 'Enter product description', 'rows': 3}}) }}
+            </div>
+
+            <div class="form-group">
+                <label for="product_price">Price (per item):</label>
+                {{ form_widget(form.price, {'attr': {'id': 'product_price', 'class': 'form-control', 'placeholder': 'Enter product price', 'step': '0.01', 'min': '0'}}) }}
+            </div>
+
+            <div class="form-group">
+                <label for="order_quantity">Quantity:</label>
+                <input
+                    type="number"
+                    id="order_quantity"
+                    name="order_quantity"
+                    class="form-control order-quantity"
+                    min="1"
+                    value="{{ orderQuantity|default(1) }}"
+                    required
+                    aria-label="Quantity"
+                >
+                <p id="order-total-preview" class="order-total-preview"></p>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-success">💾 Update</button>
+                <a href="{{ path('app_products_index') }}" class="btn btn-secondary">← Back to list</a>
+            </div>
+        {{ form_end(form) }}
+    </div>
+
+</div>
+{% endblock %}

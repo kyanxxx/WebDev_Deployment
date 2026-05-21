@@ -1,0 +1,351 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Activity Log{% endblock %}
+
+{% block page_title %}Activity Log{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .activity-log-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .filters {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .filters form {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #6b4e31;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.95rem;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-filter {
+            padding: 10px 20px;
+            background: #6b4e31;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: background 0.3s;
+        }
+
+        .btn-filter:hover {
+            background: #8b4513;
+        }
+
+        .btn-clear {
+            padding: 10px 20px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.3s;
+        }
+
+        .btn-clear:hover {
+            background: #5a6268;
+        }
+
+        .logs-table {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .logs-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .logs-table thead {
+            background: #f8f9fa;
+        }
+
+        .logs-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #6b4e31;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .logs-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .logs-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .action-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .action-CREATE {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .action-UPDATE {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .action-DELETE {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .action-LOGIN {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .action-LOGOUT {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .role-ROLE_ADMIN {
+            background: #6b4e31;
+            color: white;
+        }
+
+        .role-ROLE_STAFF {
+            background: #8b4513;
+            color: white;
+        }
+
+        .role-ROLE_USER {
+            background: #6c757d;
+            color: white;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .pagination a,
+        .pagination span {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #6b4e31;
+        }
+
+        .pagination a:hover {
+            background: #f8f9fa;
+        }
+
+        .pagination .current {
+            background: #6b4e31;
+            color: white;
+            border-color: #6b4e31;
+        }
+
+        .no-logs {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            background: #fff;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .stat-card h4 {
+            margin: 0 0 5px 0;
+            color: #6c757d;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .stat-card p {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #6b4e31;
+        }
+    </style>
+{% endblock %}
+
+{% block main_content %}
+<div class="activity-log-container">
+    <div class="stats">
+        <div class="stat-card">
+            <h4>Total Logs</h4>
+            <p>{{ totalLogs }}</p>
+        </div>
+    </div>
+
+    <div class="filters">
+        <form method="get" action="{{ path('app_activity_log_index') }}">
+            <div class="filter-group">
+                <label for="action">Action</label>
+                <select name="action" id="action">
+                    <option value="">All Actions</option>
+                    {% for act in actions %}
+                        <option value="{{ act }}" {% if currentAction == act %}selected{% endif %}>{{ act }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="entity_type">Entity Type</label>
+                <select name="entity_type" id="entity_type">
+                    <option value="">All Types</option>
+                    {% for type in entityTypes %}
+                        <option value="{{ type }}" {% if currentEntityType == type %}selected{% endif %}>{{ type }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-actions">
+                <button type="submit" class="btn-filter">Filter</button>
+            </div>
+        </form>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+        <form method="post" action="{{ path('app_activity_log_clear') }}" onsubmit="return confirm('Are you sure you want to delete ALL activity logs? This action cannot be undone.');" style="display: inline;">
+            <input type="hidden" name="_token" value="{{ csrf_token('clear_activity_logs') }}">
+            <button type="submit" class="btn-clear" style="background: #dc3545;">
+                Clear All Logs
+            </button>
+        </form>
+        </form>
+    </div>
+
+    <div class="logs-table">
+        {% if logs|length > 0 %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Date/Time</th>
+                    <th>User</th>
+                    <th>Role</th>
+                    <th>Action</th>
+                    <th>Entity Type</th>
+                    <th>Entity ID</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td>{{ log.createdAt|date('Y-m-d H:i:s') }}</td>
+                    <td>{{ log.user.username }}</td>
+                    <td>
+                        <span class="role-badge role-{{ log.userRole }}">{{ log.userRole }}</span>
+                    </td>
+                    <td>
+                        <span class="action-badge action-{{ log.action }}">{{ log.action }}</span>
+                    </td>
+                    <td>{{ log.entityType }}</td>
+                    <td>{{ log.entityId }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if totalPages > 1 %}
+        <div class="pagination">
+            {% if currentPage > 1 %}
+                <a href="{{ path('app_activity_log_index', {page: currentPage - 1, action: currentAction, entity_type: currentEntityType}) }}">Previous</a>
+            {% endif %}
+
+            {% for page in 1..totalPages %}
+                {% if page == currentPage %}
+                    <span class="current">{{ page }}</span>
+                {% else %}
+                    <a href="{{ path('app_activity_log_index', {page: page, action: currentAction, entity_type: currentEntityType}) }}">{{ page }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if currentPage < totalPages %}
+                <a href="{{ path('app_activity_log_index', {page: currentPage + 1, action: currentAction, entity_type: currentEntityType}) }}">Next</a>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% else %}
+        <div class="no-logs">
+            <h3>No activity logs found</h3>
+            <p>Activity logs will appear here when users perform actions in the system.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,38 @@
+services:
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - cafe_network    
+
+    phpmyadmin:
+      image: phpmyadmin/phpmyadmin
+      restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: ${MYSQL_USER}
+      PMA_PASSWORD: ${MYSQL_PASSWORD}
+      PMA_ARBITRARY: 1
+      # MYSQL_ROOT_PASSWORD: cafe_root_password
+      
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    networks:
+      - cafe_network
+
+volumes:
+  mysql_data:
+
+networks:
+  cafe_network:                

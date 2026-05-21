@@ -1,0 +1,239 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Search Results - Harvey's Cafe{% endblock %}
+
+{% block page_title %}Search Results{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .search-results {
+            padding: 30px;
+        }
+
+        .search-header {
+            margin-bottom: 30px;
+        }
+
+        .search-header h2 {
+            font-size: 24px;
+            color: #3E2723;
+            margin-bottom: 10px;
+        }
+
+        .search-query {
+            color: #8B5A3C;
+            font-weight: 600;
+        }
+
+        .results-section {
+            margin-bottom: 40px;
+        }
+
+        .results-section h3 {
+            font-size: 20px;
+            color: #3E2723;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #8B5A3C;
+        }
+
+        .results-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .result-item {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .result-item:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .result-item h4 {
+            font-size: 18px;
+            color: #3E2723;
+            margin-bottom: 10px;
+        }
+
+        .result-item p {
+            color: #666;
+            margin: 5px 0;
+        }
+
+        .result-item .meta {
+            font-size: 14px;
+            color: #999;
+            margin-top: 10px;
+        }
+
+        .result-item a {
+            color: #8B5A3C;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .result-item a:hover {
+            text-decoration: underline;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .no-results i {
+            font-size: 48px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+    </style>
+{% endblock %}
+
+{% block main_content %}
+<div class="search-results">
+    <div class="search-header">
+        <h2>Search Results{% if query %} for "<span class="search-query">{{ query }}</span>"{% endif %}</h2>
+        <p>Context: <strong>{{ context|upper }}</strong></p>
+    </div>
+
+    {% if query is empty %}
+        <div class="no-results">
+            <i class="fas fa-search"></i>
+            <h3>Enter a search term to begin</h3>
+            <p>Search for products, orders, or users depending on the current page.</p>
+        </div>
+    {% else %}
+        {% set hasResults = results.products|length > 0 or results.orders|length > 0 or results.users|length > 0 %}
+        
+        {% if not hasResults %}
+            <div class="no-results">
+                <i class="fas fa-search"></i>
+                <h3>No results found</h3>
+                <p>Try a different search term or check your spelling.</p>
+            </div>
+        {% else %}
+            {% if context == 'products' or context == 'all' or context == 'dashboard' %}
+                {% if results.products|length > 0 %}
+                    <div class="results-section">
+                        <h3><i class="fas fa-shopping-cart"></i> Products ({{ results.products|length }})</h3>
+                        <div class="results-list">
+                            {% for product in results.products %}
+                                <div class="result-item">
+                                    <h4>
+                                        <a href="{{ path('app_products_show', {'id': product.id}) }}">{{ product.name }}</a>
+                                    </h4>
+                                    <p>{{ product.description ?? 'No description available' }}</p>
+                                    <p><strong>Price:</strong> ${{ product.price|number_format(2) }}</p>
+                                    <div class="meta">
+                                        <a href="{{ path('app_products_edit', {'id': product.id}) }}">Edit</a> |
+                                        <a href="{{ path('app_products_show', {'id': product.id}) }}">View Details</a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            {% if (context == 'orders' or context == 'all' or context == 'dashboard') and (is_granted('ROLE_STAFF') or is_granted('ROLE_ADMIN')) %}
+                {% if results.orders|length > 0 %}
+                    <div class="results-section">
+                        <h3><i class="fas fa-receipt"></i> Orders ({{ results.orders|length }})</h3>
+                        <div class="results-list">
+                            {% for order in results.orders %}
+                                <div class="result-item">
+                                    <h4>
+                                        Order #{{ order.id }}
+                                        <span class="badge badge-{{ order.status == 'Pending' ? 'warning' : (order.status == 'Completed' ? 'success' : 'info') }}">
+                                            {{ order.status }}
+                                        </span>
+                                    </h4>
+                                    {% if order.product %}
+                                        <p><strong>Product:</strong> {{ order.product.name }}</p>
+                                    {% endif %}
+                                    <p><strong>Quantity:</strong> {{ order.quantity }}</p>
+                                    <p><strong>Total:</strong> ${{ order.totalPrice|number_format(2) }}</p>
+                                    <div class="meta">
+                                        <a href="{{ path('app_orders_show', {'id': order.id}) }}">View Details</a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            {% if (context == 'users' or context == 'all' or context == 'dashboard') and is_granted('ROLE_ADMIN') %}
+                {% if results.users|length > 0 %}
+                    <div class="results-section">
+                        <h3><i class="fas fa-users"></i> Users ({{ results.users|length }})</h3>
+                        <div class="results-list">
+                            {% for user in results.users %}
+                                <div class="result-item">
+                                    <h4>
+                                        <a href="{{ path('app_user_show', {'id': user.id}) }}">{{ user.username }}</a>
+                                        {% if user.isAdmin() %}
+                                            <span class="badge badge-danger">Admin</span>
+                                        {% elseif user.isStaff() %}
+                                            <span class="badge badge-info">Staff</span>
+                                        {% else %}
+                                            <span class="badge badge-success">User</span>
+                                        {% endif %}
+                                    </h4>
+                                    {% if user.email %}
+                                        <p><strong>Email:</strong> {{ user.email }}</p>
+                                    {% endif %}
+                                    <p><strong>Status:</strong> {{ user.status|capitalize }}</p>
+                                    <div class="meta">
+                                        <a href="{{ path('app_user_show', {'id': user.id}) }}">View Details</a> |
+                                        <a href="{{ path('app_user_edit', {'id': user.id}) }}">Edit</a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}
+

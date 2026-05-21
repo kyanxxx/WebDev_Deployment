@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Harvey's Cafe{% endblock %}</title>
+    
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('css/dashboard.css?v=8') }}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <style>
+            html, body {
+                height: 100%;
+            }
+
+            body {
+                overflow: hidden;
+            }
+
+            .dashboard {
+                height: 100vh;
+                overflow: hidden;
+            }
+
+            .content-wrapper {
+                flex: 1 1 auto;
+                min-height: 0;
+                overflow: hidden;
+                position: relative;
+            }
+
+            .sidebar {
+                position: sticky;
+                top: 0;
+                overflow-y: auto !important;
+                transition: width 0.25s ease, min-width 0.25s ease, transform 0.25s ease, opacity 0.2s ease;
+            }
+
+            /* Hide left/sidebar scrollbar so only main (right) scrollbar remains visible */
+            .sidebar {
+                scrollbar-width: none !important;
+                -ms-overflow-style: none !important;
+            }
+
+            .sidebar::-webkit-scrollbar {
+                width: 0 !important;
+                height: 0 !important;
+                display: none !important;
+            }
+
+            .main {
+                min-height: 0;
+                overflow-y: auto !important;
+                transition: margin-left 0.25s ease, width 0.25s ease;
+            }
+
+            .sidebar-toggle-btn {
+                position: absolute;
+                top: 16px;
+                left: calc(250px - 16px);
+                width: 34px;
+                height: 34px;
+                border: 1px solid #decfbe;
+                border-radius: 999px;
+                background: #fff;
+                color: #6b4e31;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                z-index: 1300;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            }
+
+            .dashboard.sidebar-collapsed .sidebar {
+                width: 0 !important;
+                min-width: 0 !important;
+                border-right: none !important;
+                opacity: 0;
+                overflow: hidden !important;
+                pointer-events: none;
+            }
+
+            .dashboard.sidebar-collapsed .sidebar-toggle-btn {
+                left: 8px;
+            }
+
+            @media (max-width: 768px) {
+                .sidebar {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: min(84vw, 300px) !important;
+                    min-width: min(84vw, 300px) !important;
+                    height: 100vh;
+                    z-index: 1250;
+                    transform: translateX(-100%);
+                    opacity: 1;
+                    pointer-events: auto;
+                }
+
+                .dashboard.sidebar-open .sidebar {
+                    transform: translateX(0);
+                }
+
+                .dashboard.sidebar-collapsed .sidebar {
+                    transform: translateX(-100%);
+                }
+
+                .sidebar-toggle-btn {
+                    position: fixed;
+                    top: 86px;
+                    left: 10px;
+                }
+            }
+
+            .header-actions {
+                display: flex;
+                align-items: center;
+                gap: 1.4rem;
+            }
+
+            .notification-wrap {
+                position: relative;
+            }
+
+            .notification-button {
+                width: 42px;
+                height: 42px;
+                border-radius: 50%;
+                border: 1px solid rgba(255, 255, 255, 0.35);
+                background: rgba(255, 255, 255, 0.2);
+                color: #fff;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1rem;
+            }
+
+            .notification-badge {
+                position: absolute;
+                top: -4px;
+                right: -4px;
+                min-width: 18px;
+                height: 18px;
+                border-radius: 999px;
+                padding: 0 5px;
+                background: #dc3545;
+                color: #fff;
+                font-size: 0.68rem;
+                font-weight: 700;
+                display: none;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .notification-dropdown {
+                position: absolute;
+                right: 0;
+                top: calc(100% + 10px);
+                width: min(360px, 85vw);
+                background: #fff;
+                border-radius: 12px;
+                border: 1px solid #e5d9cf;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+                padding: 0.75rem;
+                display: none;
+                z-index: 1200;
+            }
+
+            .notification-dropdown.show {
+                display: block;
+            }
+
+            .notification-title {
+                margin: 0 0 0.55rem 0;
+                color: #4f3422;
+                font-size: 0.95rem;
+                font-weight: 700;
+            }
+
+            .notification-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 0.6rem;
+                margin-bottom: 0.6rem;
+            }
+
+            .notification-clear-btn {
+                border: 1px solid #eadbcf;
+                background: #fff5ee;
+                color: #8b4513;
+                border-radius: 8px;
+                padding: 0.3rem 0.55rem;
+                font-size: 0.74rem;
+                font-weight: 700;
+                cursor: pointer;
+                white-space: nowrap;
+            }
+
+            .notification-clear-btn:disabled {
+                opacity: 0.55;
+                cursor: not-allowed;
+            }
+
+            .notification-status-done {
+                color: #28a745;
+                margin-left: 0.3rem;
+                font-size: 0.8rem;
+            }
+
+            .notification-list {
+                list-style: none;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                flex-direction: column;
+                gap: 0.45rem;
+                max-height: 280px;
+                overflow-y: auto;
+            }
+
+            .notification-list li a {
+                display: block;
+                text-decoration: none;
+                border-radius: 8px;
+                border: 1px solid #efe5dc;
+                padding: 0.6rem 0.65rem;
+                color: #5e4433;
+                background: #fdfaf7;
+            }
+
+            .notification-list li a strong {
+                display: block;
+                color: #3f2b1d;
+                font-size: 0.85rem;
+            }
+
+            .notification-list li a span {
+                font-size: 0.8rem;
+                color: #7d6554;
+            }
+
+            .notification-empty {
+                color: #8e7a6c;
+                font-size: 0.83rem;
+                padding: 0.7rem 0.3rem;
+            }
+
+            .flash-message {
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                width: fit-content;
+                max-width: min(420px, calc(100vw - 20px)) !important;
+                padding: 10px 14px !important;
+                margin: 0 !important;
+                font-size: 0.92rem;
+                text-align: center;
+                pointer-events: auto;
+                animation: flashAutoDismiss 1.5s ease forwards;
+            }
+
+            .flash-message span {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                width: auto !important;
+            }
+
+            .flash-message-layer {
+                position: fixed;
+                top: 84px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: min(440px, calc(100vw - 20px));
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+                z-index: 3000;
+                pointer-events: none;
+            }
+
+            @keyframes flashAutoDismiss {
+                0% {
+                    opacity: 0;
+                    transform: translateY(-8px);
+                }
+                20% {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+                80% {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+                100% {
+                    opacity: 0;
+                    transform: translateY(-8px);
+                }
+            }
+        </style>
+    {% endblock %}
+</head>
+<body>
+    {% block body %}
+    <div class="dashboard">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-title">
+                    <a href="{{ path('app_profile_index') }}" style="text-decoration: none; display: flex; align-items: center; gap: 15px;">
+                        <img src="{{ asset('img/Logo.png') }}" alt="Cafe Logo" class="cafe-logo" style="cursor: pointer;">
+                        <h1>{% block page_title %}{% if is_granted('ROLE_ADMIN') %}Admin Dashboard{% elseif is_granted('ROLE_STAFF') %}Staff Dashboard{% else %}Dashboard{% endif %}{% endblock %}</h1>
+                    </a>
+                </div>
+
+                <div class="search-bar" style="flex: 1; max-width: 500px; margin: 0 2rem; display: flex; align-items: center; position: relative;">
+                    {% set currentRoute = app.request.get('_route') %}
+                    {% set searchContext = 'all' %}
+                    {% if currentRoute == 'app_products_index' or currentRoute == 'app_products_menu' or currentRoute == 'app_products_new' or currentRoute == 'app_products_edit' or currentRoute == 'app_products_show' %}
+                        {% set searchContext = 'products' %}
+                    {% elseif currentRoute == 'app_order_form' or currentRoute == 'app_orders_index' or currentRoute == 'app_orders_new' or currentRoute == 'app_orders_show' %}
+                        {% set searchContext = 'orders' %}
+                    {% elseif currentRoute starts with 'app_user' %}
+                        {% set searchContext = 'users' %}
+                    {% elseif currentRoute == 'app_dashboard' %}
+                        {% set searchContext = 'dashboard' %}
+                    {% endif %}
+                    <form action="#" method="get" class="search-form" style="display: flex; width: 100%; background: transparent; border-radius: 30px; overflow: visible; border: 2px solid #8B5A3C; transition: all 0.3s ease; position: relative;">
+                        <input type="text" name="search" id="search-input" placeholder="Search..." class="search-input" aria-label="Search" autocomplete="off" style="flex: 1; background: white; border: none; outline: none; color: #333; font-size: 1rem; padding: 0.75rem 1.25rem; border-radius: 30px 0 0 30px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+                        <button type="submit" class="search-button" aria-label="Submit search" style="background: #8B5A3C; border: none; border-radius: 0 30px 30px 0; padding: 0.75rem 1.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background-color 0.2s; color: white;">
+                            <i class="fas fa-search" style="font-size: 1.2rem; color: white;"></i>
+                        </button>
+                        <div id="search-results-dropdown" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid #8B5A3C; border-top: none; border-radius: 0 0 30px 30px; max-height: 400px; overflow-y: auto; z-index: 1000; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); margin-top: 2px;">
+                            <div id="search-results-content" style="padding: 10px;"></div>
+                        </div>
+                    </form>
+                    <input type="hidden" id="search-context" value="{{ searchContext }}">
+                </div>
+
+                <div class="header-actions">
+                    {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_STAFF') %}
+                        <div class="notification-wrap">
+                            <button type="button" id="order-notification-button" class="notification-button" aria-label="Order notifications">
+                                <i class="fas fa-bell"></i>
+                                <span id="order-notification-badge" class="notification-badge">0</span>
+                            </button>
+                            <div id="order-notification-dropdown" class="notification-dropdown" aria-hidden="true">
+                                <div class="notification-header">
+                                    <p class="notification-title">Incoming Customer Orders</p>
+                                    <button type="button" id="clear-order-notifications" class="notification-clear-btn">Delete All</button>
+                                </div>
+                                <ul id="order-notification-list" class="notification-list">
+                                    <li class="notification-empty">Loading notifications...</li>
+                                </ul>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="user-info">
+                    {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_STAFF') %}
+                        <a href="{{ path('app_profile_index') }}" style="text-decoration: none; color: white; display: flex; align-items: center; gap: 10px;">
+                            <span>Welcome, {% if is_granted('ROLE_ADMIN') %}Admin{% elseif is_granted('ROLE_STAFF') %}Staff{% else %}User{% endif %}!</span>
+                            <i class="fas fa-user-circle" style="cursor: pointer;" title="View Profile"></i>
+                        </a>
+                    {% else %}
+                        <a href="{{ path('app_profile_index') }}" style="text-decoration: none; color: white; display: flex; align-items: center; gap: 10px;">
+                            <span>Welcome, {{ app.user.username|format_username }}!</span>
+                            <i class="fas fa-user-circle" style="cursor: pointer;" title="View Profile"></i>
+                        </a>
+                    {% endif %}
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Wrapper -->
+        <div class="content-wrapper">
+            <button
+                type="button"
+                id="sidebar-toggle-btn"
+                class="sidebar-toggle-btn"
+                aria-label="Toggle sidebar"
+                aria-controls="app-sidebar"
+                aria-expanded="true"
+            >
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <!-- Sidebar -->
+            <aside class="sidebar" id="app-sidebar">
+                <nav>
+                    <ul>                       
+                        {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_STAFF') %}
+                            <li><a href="{{ path('app_dashboard') }}" class="{% if app.request.get('_route') == 'app_dashboard' %}active{% endif %}"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                            <li><a href="{{ path('app_products_index') }}" class="{% if app.request.get('_route') == 'app_products_index' %}active{% endif %}"><i class="fas fa-shopping-cart"></i> Order Now</a></li>
+                            <li><a href="{{ path('app_products_menu') }}" class="{% if app.request.get('_route') == 'app_products_menu' %}active{% endif %}"><i class="fas fa-utensils"></i> Menu / Products</a></li>
+                            <li><a href="{{ path('app_order_form') }}" class="{% if app.request.get('_route') == 'app_order_form' %}active{% endif %}"><i class="fas fa-receipt"></i> Orders</a></li>
+                            <li><a href="{{ path('app_transaction_history_index') }}" class="{% if app.request.get('_route') == 'app_transaction_history_index' %}active{% endif %}"><i class="fas fa-history"></i> Transaction History</a></li>
+                        {% endif %}
+                        
+                        {% if is_granted('ROLE_USER') and not is_granted('ROLE_ADMIN') and not is_granted('ROLE_STAFF') %}
+                            <li><a href="{{ path('app_customer_index') }}" class="{% if app.request.get('_route') == 'app_customer_index' %}active{% endif %}"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                            {# <li><a href="{{ path('app_products_index') }}" class="{% if app.request.get('_route') == 'app_products_index' %}active{% endif %}"><i class="fas fa-shopping-cart"></i> Order Now</a></li> #}
+                            <li><a href="{{ path('app_products_menu') }}" class="{% if app.request.get('_route') == 'app_products_menu' %}active{% endif %}"><i class="fas fa-utensils"></i> Menu / Products</a></li>
+                            <li><a href="{{ path('app_profile_index') }}" class="{% if app.request.get('_route') == 'app_profile_index' or app.request.get('_route') == 'app_profile_change_password' %}active{% endif %}"><i class="fas fa-user"></i> My Profile</a></li>
+                        {% endif %}
+                        
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <li><a href="{{ path('app_user_index') }}" class="{% if app.request.get('_route') starts with 'app_user' %}active{% endif %}"><i class="fas fa-users"></i> User Management</a></li>
+                            <li><a href="{{ path('app_activity_log_index') }}" class="{% if app.request.get('_route') == 'app_activity_log_index' %}active{% endif %}"><i class="fas fa-chart-bar"></i> Activity Log</a></li>
+                        {% endif %}
+                        
+                        {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_STAFF') %}
+                            <li><a href="{{ path('app_profile_index') }}" class="{% if app.request.get('_route') == 'app_profile_index' or app.request.get('_route') == 'app_profile_change_password' %}active{% endif %}"><i class="fas fa-user"></i> My Profile</a></li>
+                        {% endif %}
+                        
+                        {% if is_granted('ROLE_USER') %}
+                            <li><a href="{{ path('app_logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="main">
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="flash-message flash-{{ label }}" style="background: {% if label == 'success' %}#d4edda; color: #155724; border: 1px solid #c3e6cb;{% elseif label == 'error' %}#f8d7da; color: #721c24; border: 1px solid #f5c6cb;{% else %}#d1ecf1; color: #0c5460; border: 1px solid #bee5eb;{% endif %} padding: 15px 20px; margin: 20px auto; max-width: 1200px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <span>{% if label != 'success' %}<i class="fas fa-{% if label == 'error' %}exclamation-circle{% else %}info-circle{% endif %}"></i> {% endif %}{{ message }}</span>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+                {% block main_content %}
+                <section class="overview">
+                    <h2>Quick Overview</h2>
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <i class="fas fa-dollar-sign icon"></i>
+                            <h3>Today's Sales</h3>
+                            <p class="value">${{ sales_today ?? 1250.50 }}</p>
+                            <span class="trend positive">+12% from yesterday</span>
+                        </div>
+                        <div class="metric-card">
+                            <i class="fas fa-utensils icon"></i>
+                            <h3>Popular Item</h3>
+                            <p class="value">{{ popular_item ?? 'Espresso' }}</p>
+                            <span class="trend">Sold: {{ popular_sales ?? 45 }} cups</span>
+                        </div>
+                        <div class="metric-card">
+                            <i class="fas fa-clock icon"></i>
+                            <h3>Recent Orders</h3>
+                            <p class="value">{{ pending_orders ?? 12 }} pending</p>
+                            <span class="trend neutral">Avg. wait: 5 min</span>
+                        </div>
+                        <div class="metric-card">
+                            <i class="fas fa-box icon"></i>
+                            <h3>Inventory Alert</h3>
+                            <p class="value">{{ low_stock_item ?? 'Coffee Beans Low' }}</p>
+                            <span class="trend negative">-20% stock</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Recent Orders -->
+                <section class="orders">
+                    <h2>Recent Orders</h2>
+                    <div class="orders-grid">
+                        {% for order in recent_orders ?? [] %}
+                            <div class="order-card">
+                                <div class="order-header">
+                                    <span class="order-id">{{ order.id ?? '#001' }}</span>
+                                    <span class="status {{ order.status_class ?? 'preparing' }}">{{ order.status ?? 'Preparing' }}</span>
+                                </div>
+                                <div class="order-body">
+                                    <p><strong>Customer:</strong> {{ order.customer ?? 'John Doe' }}</p>
+                                    <p><strong>Items:</strong> {{ order.items ?? 'Latte x2' }}</p>
+                                    <p><strong>Total:</strong> ${{ order.total ?? 12.00 }}</p>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="order-card">
+                                <div class="order-header">
+                                    <span class="order-id">#001</span>
+                                    <span class="status preparing">Preparing</span>
+                                </div>
+                                <div class="order-body">
+                                    <p><strong>Customer:</strong> John Doe</p>
+                                    <p><strong>Items:</strong> Latte x2</p>
+                                    <p><strong>Total:</strong> $12.00</p>
+                                </div>
+                            </div>
+
+                            <div class="order-card">
+                                <div class="order-header">
+                                    <span class="order-id">#002</span>
+                                    <span class="status ready">Ready</span>
+                                </div>
+                                <div class="order-body">
+                                    <p><strong>Customer:</strong> Jane Smith</p>
+                                    <p><strong>Items:</strong> Cappuccino</p>
+                                    <p><strong>Total:</strong> $4.50</p>
+                                </div>
+                            </div>
+
+                            <div class="order-card">
+                                <div class="order-header">
+                                    <span class="order-id">#003</span>
+                                    <span class="status delivered">Delivered</span>
+                                </div>
+                                <div class="order-body">
+                                    <p><strong>Customer:</strong> Mike Johnson</p>
+                                    <p><strong>Items:</strong> Espresso</p>
+                                    <p><strong>Total:</strong> $3.00</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </section>
+                {% endblock %}
+            </main>
+        </div>
+    </div>
+    {% endblock %}
+
+    {% block javascripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('search-input');
+            const searchResults = document.getElementById('search-results-dropdown');
+            const searchContent = document.getElementById('search-results-content');
+            const searchContextElement = document.getElementById('search-context');
+            const searchContext = searchContextElement ? searchContextElement.value : 'all';
+            let searchTimeout;
+
+            if (searchInput) {
+                // Show all products when search input is focused
+                searchInput.addEventListener('focus', function() {
+                    const query = this.value.trim();
+                    if (query.length === 0) {
+                        fetch(`/search/api?q=*&context=${searchContext}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                displaySearchResults(data, '');
+                            })
+                            .catch(error => {
+                                console.error('Search error:', error);
+                            });
+                    }
+                });
+
+                searchInput.addEventListener('input', function() {
+                    const query = this.value.trim();
+                    
+                    clearTimeout(searchTimeout);
+                    
+                    // If query is empty, show all products
+                    if (query.length === 0) {
+                        searchTimeout = setTimeout(function() {
+                            fetch(`/search/api?q=*&context=${searchContext}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    displaySearchResults(data, '');
+                                })
+                                .catch(error => {
+                                    console.error('Search error:', error);
+                                });
+                        }, 300);
+                        return;
+                    }
+                    
+                    // Search with query - will find all matching products
+                    searchTimeout = setTimeout(function() {
+                        fetch(`/search/api?q=${encodeURIComponent(query)}&context=${searchContext}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                displaySearchResults(data, query);
+                            })
+                            .catch(error => {
+                                console.error('Search error:', error);
+                            });
+                    }, 300);
+                });
+
+                // Hide dropdown when clicking outside
+                document.addEventListener('click', function(event) {
+                    if (!event.target.closest('.search-form')) {
+                        searchResults.style.display = 'none';
+                    }
+                });
+
+                // Prevent form submission
+                document.querySelector('.search-form').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                });
+            }
+
+            function displaySearchResults(data, query) {
+                let html = '';
+                let hasResults = false;
+
+                if (data.products && data.products.length > 0) {
+                    hasResults = true;
+                    html += '<div style="padding: 10px; border-bottom: 1px solid #e0e0e0;"><strong style="color: #8B5A3C; font-size: 14px;"><i class="fas fa-shopping-cart"></i> Products (' + data.products.length + ')</strong></div>';
+                    data.products.forEach(function(product) {
+                        html += `<a href="${product.url}" style="display: block; padding: 12px 15px; text-decoration: none; color: #333; border-bottom: 1px solid #f0f0f0; transition: background-color 0.2s;">
+                            <div style="font-weight: 600; color: #3E2723; margin-bottom: 4px;">${product.name}</div>
+                            <div style="font-size: 12px; color: #666;">${product.description || 'No description'}</div>
+                            <div style="font-size: 14px; color: #8B5A3C; font-weight: 600; margin-top: 4px;">$${parseFloat(product.price).toFixed(2)}</div>
+                        </a>`;
+                    });
+                }
+
+                if (data.orders && data.orders.length > 0) {
+                    hasResults = true;
+                    html += '<div style="padding: 10px; border-bottom: 1px solid #e0e0e0; border-top: 1px solid #e0e0e0;"><strong style="color: #8B5A3C; font-size: 14px;"><i class="fas fa-receipt"></i> Orders</strong></div>';
+                    data.orders.slice(0, 5).forEach(function(order) {
+                        html += `<a href="${order.url}" style="display: block; padding: 12px 15px; text-decoration: none; color: #333; border-bottom: 1px solid #f0f0f0; transition: background-color 0.2s;">
+                            <div style="font-weight: 600; color: #3E2723; margin-bottom: 4px;">Order #${order.id} - ${order.status}</div>
+                            <div style="font-size: 12px; color: #666;">${order.productName} x ${order.quantity}</div>
+                            <div style="font-size: 14px; color: #8B5A3C; font-weight: 600; margin-top: 4px;">$${parseFloat(order.totalPrice).toFixed(2)}</div>
+                        </a>`;
+                    });
+                    if (data.orders.length > 5) {
+                        html += `<div style="padding: 10px; text-align: center; color: #8B5A3C; font-size: 12px;">+ ${data.orders.length - 5} more orders</div>`;
+                    }
+                }
+
+                if (data.users && data.users.length > 0) {
+                    hasResults = true;
+                    html += '<div style="padding: 10px; border-bottom: 1px solid #e0e0e0; border-top: 1px solid #e0e0e0;"><strong style="color: #8B5A3C; font-size: 14px;"><i class="fas fa-users"></i> Users (${data.users.length})</strong></div>';
+                    data.users.slice(0, 5).forEach(function(user) {
+                        const statusBadge = user.status === 'active' ? 
+                            '<span style="font-size: 10px; background: #4CAF50; color: white; padding: 2px 6px; border-radius: 8px; margin-left: 6px;">Active</span>' :
+                            user.status === 'disabled' ?
+                            '<span style="font-size: 10px; background: #FF9800; color: white; padding: 2px 6px; border-radius: 8px; margin-left: 6px;">Disabled</span>' :
+                            '<span style="font-size: 10px; background: #9E9E9E; color: white; padding: 2px 6px; border-radius: 8px; margin-left: 6px;">Archived</span>';
+                        
+                        html += `<a href="${user.url}" style="display: block; padding: 12px 15px; text-decoration: none; color: #333; border-bottom: 1px solid #f0f0f0; transition: background-color 0.2s;">
+                            <div style="font-weight: 600; color: #3E2723; margin-bottom: 4px;">
+                                <span style="font-size: 11px; color: #666; margin-right: 6px;">#${user.id}</span>
+                                ${user.username} 
+                                <span style="font-size: 11px; color: #8B5A3C; background: #f0f0f0; padding: 2px 8px; border-radius: 10px; margin-left: 6px;">${user.role}</span>
+                                ${statusBadge}
+                            </div>
+                            <div style="font-size: 12px; color: #666; margin-bottom: 2px;">${user.email || 'No email'}</div>
+                            ${user.createdAt ? '<div style="font-size: 11px; color: #999;">Created: ' + user.createdAt + '</div>' : ''}
+                        </a>`;
+                    });
+                    if (data.users.length > 5) {
+                        html += `<div style="padding: 10px; text-align: center; color: #8B5A3C; font-size: 12px;">+ ${data.users.length - 5} more users</div>`;
+                    }
+                }
+
+                if (!hasResults && query.length > 0) {
+                    html = '<div style="padding: 20px; text-align: center; color: #999;"><i class="fas fa-search" style="font-size: 24px; margin-bottom: 10px; opacity: 0.3;"></i><div>No results found for "' + query + '"</div></div>';
+                } else if (!hasResults && query.length === 0) {
+                    html = '<div style="padding: 20px; text-align: center; color: #999;"><i class="fas fa-search" style="font-size: 24px; margin-bottom: 10px; opacity: 0.3;"></i><div>Start typing to search products...</div></div>';
+                }
+
+                searchContent.innerHTML = html;
+                searchResults.style.display = hasResults ? 'block' : 'none';
+
+                // Add hover effects
+                searchContent.querySelectorAll('a').forEach(function(link) {
+                    link.addEventListener('mouseenter', function() {
+                        this.style.backgroundColor = '#f5f5f5';
+                    });
+                    link.addEventListener('mouseleave', function() {
+                        this.style.backgroundColor = 'transparent';
+                    });
+                });
+            }
+
+            const notificationButton = document.getElementById('order-notification-button');
+            const notificationDropdown = document.getElementById('order-notification-dropdown');
+            const notificationBadge = document.getElementById('order-notification-badge');
+            const notificationList = document.getElementById('order-notification-list');
+            const clearNotificationsButton = document.getElementById('clear-order-notifications');
+
+            if (notificationButton && notificationDropdown && notificationBadge && notificationList && clearNotificationsButton) {
+                const notificationEndpoint = "{{ path('app_dashboard_order_notifications') }}";
+                const dismissedNotificationsKey = 'dismissedOrderNotifications';
+                const readDismissedIds = () => {
+                    try {
+                        const raw = localStorage.getItem(dismissedNotificationsKey);
+                        const parsed = raw ? JSON.parse(raw) : [];
+                        return Array.isArray(parsed) ? parsed.map((id) => Number(id)) : [];
+                    } catch (e) {
+                        return [];
+                    }
+                };
+                const saveDismissedIds = (ids) => {
+                    localStorage.setItem(dismissedNotificationsKey, JSON.stringify(ids));
+                };
+
+                const dedupeNotificationsByProduct = (notifications) => {
+                    const dedupedMap = new Map();
+
+                    notifications.forEach((order) => {
+                        const productName = (order.productName ?? 'Unknown product').trim();
+                        const key = productName.toLowerCase();
+
+                        if (!dedupedMap.has(key)) {
+                            dedupedMap.set(key, {
+                                ...order,
+                                productName
+                            });
+                            return;
+                        }
+
+                        const existing = dedupedMap.get(key);
+                        dedupedMap.set(key, {
+                            ...existing,
+                            // Preserve the latest visible order details while reflecting DONE state.
+                            id: Math.max(Number(existing.id ?? 0), Number(order.id ?? 0)),
+                            quantity: order.quantity ?? existing.quantity,
+                            totalPrice: order.totalPrice ?? existing.totalPrice,
+                            status: order.status ?? existing.status,
+                            isServed: Boolean(existing.isServed || order.isServed)
+                        });
+                    });
+
+                    return Array.from(dedupedMap.values()).sort((a, b) => Number(b.id ?? 0) - Number(a.id ?? 0));
+                };
+
+                const renderNotificationList = (payload) => {
+                    const notifications = dedupeNotificationsByProduct(payload.notifications ?? []);
+                    const ordersUrl = payload.ordersUrl ?? "{{ path('app_order_form') }}";
+                    const dismissedIds = readDismissedIds();
+                    const visibleNotifications = notifications.filter((order) => !dismissedIds.includes(Number(order.id)));
+                    const activeVisibleCount = visibleNotifications.filter((order) => !order.isServed).length;
+
+                    notificationBadge.textContent = String(activeVisibleCount);
+                    notificationBadge.style.display = activeVisibleCount > 0 ? 'inline-flex' : 'none';
+                    clearNotificationsButton.disabled = visibleNotifications.length === 0;
+
+                    if (!visibleNotifications.length) {
+                        notificationList.innerHTML = '<li class="notification-empty">No pending customer orders right now.</li>';
+                        return;
+                    }
+
+                    notificationList.innerHTML = visibleNotifications.map((order) => {
+                        const safeProduct = order.productName ?? 'Unknown product';
+                        const safeQuantity = order.quantity ?? 1;
+                        const safeTotal = Number(order.totalPrice ?? 0).toFixed(2);
+                        const servedMark = order.isServed
+                            ? '<i class="fas fa-check-circle notification-status-done" title="Done serving"></i>'
+                            : '';
+
+                        return `
+                            <li>
+                                <a href="${ordersUrl}">
+                                    <strong>Order #${order.id} - ${safeProduct}${servedMark}</strong>
+                                    <span>Qty: ${safeQuantity} | Total: $${safeTotal}</span>
+                                </a>
+                            </li>
+                        `;
+                    }).join('');
+                };
+
+                const loadNotifications = async () => {
+                    try {
+                        const response = await fetch(notificationEndpoint, {
+                            method: 'GET',
+                            headers: { 'Accept': 'application/json' },
+                            cache: 'no-store'
+                        });
+
+                        if (!response.ok) {
+                            return;
+                        }
+
+                        const payload = await response.json();
+                        renderNotificationList(payload);
+                    } catch (error) {
+                        // Keep header usable even when notification fetch fails.
+                    }
+                };
+
+                clearNotificationsButton.addEventListener('click', async (event) => {
+                    event.preventDefault();
+                    try {
+                        const response = await fetch(notificationEndpoint, {
+                            method: 'GET',
+                            headers: { 'Accept': 'application/json' },
+                            cache: 'no-store'
+                        });
+                        if (!response.ok) {
+                            return;
+                        }
+                        const payload = await response.json();
+                        const idsToDismiss = (payload.notifications ?? []).map((order) => Number(order.id));
+                        saveDismissedIds(Array.from(new Set([...readDismissedIds(), ...idsToDismiss])));
+                        renderNotificationList(payload);
+                    } catch (error) {
+                        // Keep header usable even when clear request fails.
+                    }
+                });
+
+                notificationButton.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    notificationDropdown.classList.toggle('show');
+                    notificationDropdown.setAttribute('aria-hidden', notificationDropdown.classList.contains('show') ? 'false' : 'true');
+                });
+
+                document.addEventListener('click', (event) => {
+                    if (!event.target.closest('.notification-wrap')) {
+                        notificationDropdown.classList.remove('show');
+                        notificationDropdown.setAttribute('aria-hidden', 'true');
+                    }
+                });
+
+                loadNotifications();
+                setInterval(loadNotifications, 8000);
+            }
+
+            const flashMessages = Array.from(document.querySelectorAll('.flash-message'));
+            if (flashMessages.length) {
+                const flashLayer = document.createElement('div');
+                flashLayer.className = 'flash-message-layer';
+                document.body.appendChild(flashLayer);
+                flashMessages.forEach((flashMessage) => {
+                    flashLayer.appendChild(flashMessage);
+                });
+            }
+
+            document.querySelectorAll('.flash-message').forEach((flashMessage) => {
+                flashMessage.addEventListener('animationend', () => {
+                    flashMessage.remove();
+                }, { once: true });
+            });
+
+            const dashboard = document.querySelector('.dashboard');
+            const sidebarToggleButton = document.getElementById('sidebar-toggle-btn');
+            const sidebarToggleIcon = sidebarToggleButton ? sidebarToggleButton.querySelector('i') : null;
+            const sidebarPreferenceKey = 'dashboardSidebarCollapsed';
+            const mobileMedia = window.matchMedia('(max-width: 768px)');
+
+            const updateSidebarToggleIcon = () => {
+                if (!dashboard || !sidebarToggleButton || !sidebarToggleIcon) {
+                    return;
+                }
+
+                const isMobile = mobileMedia.matches;
+                const isOpen = isMobile
+                    ? dashboard.classList.contains('sidebar-open')
+                    : !dashboard.classList.contains('sidebar-collapsed');
+
+                sidebarToggleIcon.classList.toggle('fa-chevron-left', isOpen);
+                sidebarToggleIcon.classList.toggle('fa-chevron-right', !isOpen);
+                sidebarToggleButton.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            };
+
+            const applySidebarState = () => {
+                if (!dashboard || !sidebarToggleButton) {
+                    return;
+                }
+
+                if (mobileMedia.matches) {
+                    dashboard.classList.remove('sidebar-collapsed');
+                    dashboard.classList.remove('sidebar-open');
+                } else {
+                    dashboard.classList.remove('sidebar-open');
+                    const savedState = localStorage.getItem(sidebarPreferenceKey) === '1';
+                    dashboard.classList.toggle('sidebar-collapsed', savedState);
+                }
+
+                updateSidebarToggleIcon();
+            };
+
+            if (dashboard && sidebarToggleButton) {
+                applySidebarState();
+
+                sidebarToggleButton.addEventListener('click', () => {
+                    if (mobileMedia.matches) {
+                        dashboard.classList.toggle('sidebar-open');
+                    } else {
+                        const nowCollapsed = !dashboard.classList.contains('sidebar-collapsed');
+                        dashboard.classList.toggle('sidebar-collapsed', nowCollapsed);
+                        localStorage.setItem(sidebarPreferenceKey, nowCollapsed ? '1' : '0');
+                    }
+                    updateSidebarToggleIcon();
+                });
+
+                document.addEventListener('click', (event) => {
+                    if (!mobileMedia.matches || !dashboard.classList.contains('sidebar-open')) {
+                        return;
+                    }
+
+                    const clickedInsideSidebar = event.target.closest('#app-sidebar');
+                    const clickedToggle = event.target.closest('#sidebar-toggle-btn');
+                    if (!clickedInsideSidebar && !clickedToggle) {
+                        dashboard.classList.remove('sidebar-open');
+                        updateSidebarToggleIcon();
+                    }
+                });
+
+                mobileMedia.addEventListener('change', applySidebarState);
+            }
+        });
+    </script>
+    {% endblock %}
+</body>
+</html>

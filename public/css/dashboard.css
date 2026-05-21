@@ -1,0 +1,840 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+    line-height: 1.6;
+    overflow: hidden;
+}
+
+/* Dashboard Container - Now uses column for header + content row */
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.content-wrapper {
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
+    align-items: flex-start; /* keeps top aligned */
+    justify-content: center; /* centers main content beside sidebar */
+}
+
+
+/* Header - Full width on top */
+.header {
+    background: linear-gradient(135deg, #6b4e31 0%, #8b4513 100%);
+    color: white;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0; /* Prevents header from shrinking */
+    z-index: 10; /* Ensures it stays on top */
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.logo-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.cafe-logo {
+    height: 70px;        
+    width: auto;
+    object-fit: contain;
+    vertical-align: middle;
+    margin-top: -2px;
+    margin-left: -80px;       
+}
+
+.header h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+
+.header h1 {
+    font-size: 1.8rem;
+    font-family: 'Montserrat';
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.header h1 i {
+    font-size: 2rem;
+    color: #d4af37;
+}
+
+.user-info {
+    font-family: 'Montserrat';
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+}
+
+.user-info i {
+    font-size: 2rem;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.user-info i:hover {
+    color: #d4af37;
+}
+
+/* Search Bar */
+.search-bar {
+    flex: 1;
+    max-width: 500px;
+    margin: 0 2rem;
+    display: flex;
+    align-items: center;
+}
+
+.search-form {
+    display: flex;
+    width: 100%;
+    background: transparent;
+    border-radius: 30px;
+    overflow: hidden;
+    border: 2px solid #8B5A3C;
+    transition: all 0.3s ease;
+}
+
+.search-form:focus-within {
+    box-shadow: 0 4px 15px rgba(139, 90, 60, 0.3);
+}
+
+.search-input {
+    flex: 1;
+    background: white;
+    border: none;
+    outline: none;
+    color: #333;
+    font-size: 1rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 30px 0 0 30px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.search-input::placeholder {
+    color: #999;
+}
+
+.search-button {
+    background: #8B5A3C;
+    border: none;
+    border-radius: 0 30px 30px 0;
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    color: white;
+}
+
+.search-button:hover {
+    background: #6B4423;
+}
+
+.search-button:active {
+    background: #5a3820;
+}
+
+.search-button i {
+    font-size: 1.2rem;
+    color: white;
+}
+
+/* NEW: Content Wrapper for Sidebar + Main (Horizontal Flex Row) */
+.content-wrapper {
+    display: flex;
+    flex: 1; /* Takes remaining space below header */
+    min-height: 0;
+    align-items: stretch; /* Ensures sidebar and main stretch to same height */
+    overflow: hidden;
+}
+
+/* Sidebar - Now left-aligned in the row */
+.sidebar {
+    width: 250px;
+    background-color: #fff;
+    border-right: 1px solid #e0e0e0;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+    flex-shrink: 0; /* Prevents sidebar from shrinking */
+    overflow-y: auto; /* Scroll only sidebar menu when needed */
+    z-index: 5;
+    align-self: stretch; /* Stretches to match content-wrapper height */
+    display: flex;
+    flex-direction: column;
+    min-height: 100%; /* Ensures sidebar extends to full height */
+    position: sticky;
+    top: 0;
+}
+
+.sidebar nav {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar nav ul {
+    list-style: none;
+    padding: 1rem 0;
+    flex: 1;
+}
+
+.sidebar li {
+    margin: 0.5rem 0;
+}
+
+.sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    text-decoration: none;
+    color: #555;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+    background-color: #f8f9fa;
+    color: #6b4e31;
+    border-left-color: #8b4513;
+}
+
+.sidebar i {
+    width: 20px;
+    text-align: center;
+}
+
+/* Main Content - Now flexible width next to sidebar */
+.main {
+    flex: 1;
+    padding: 2rem;
+    overflow-y: auto;
+    min-height: 0;
+    background-color: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.main h2 {
+    margin-bottom: 1.5rem;
+    color: #6b4e31;
+    font-size: 1.5rem;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 0.5rem;
+}
+
+/* Metrics Grid - Now properly positioned in main */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 cards side by side */
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto 3rem auto;
+    justify-items: center;
+}
+
+@media (max-width: 1024px) {
+    .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .metrics-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+.metric-card {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    width: 100%;
+    max-width: 260px;
+    transition: transform 0.2s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-5px);
+}
+
+
+.metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #6b4e31, #8b4513);
+}
+
+.metric-card .icon {
+    font-size: 2.5rem;
+    color: #8b4513;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.metric-card h3 {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.metric-card .value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #6b4e31;
+    margin-bottom: 0.25rem;
+}
+
+.metric-card .trend {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.trend.positive {
+    color: #28a745;
+}
+
+.trend.negative {
+    color: #dc3545;
+}
+
+.trend.neutral {
+    color: #6c757d;
+}
+
+/* Orders Table */
+.orders table {
+    width: 100%;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border-collapse: collapse;
+}
+
+.orders thead {
+    background: #f8f9fa;
+}
+
+.orders th,
+.orders td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.orders th {
+    font-weight: 600;
+    color: #6b4e31;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+}
+
+.orders tbody tr:hover {
+    background-color: #f8f9fa;
+    transition: background-color 0.3s ease;
+}
+
+.status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.status.preparing {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status.ready {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.status.delivered {
+    background: #d4edda;
+    color: #155724;
+}
+
+/* Responsive Design - Hide/collapse sidebar on mobile */
+@media (max-width: 768px) {
+    .search-bar {
+        max-width: 200px;
+        margin: 0 1rem;
+    }
+
+    .search-input {
+        font-size: 0.85rem;
+        padding: 0.6rem 1rem;
+    }
+
+    .search-button {
+        padding: 0.6rem 1.2rem;
+    }
+
+    .content-wrapper {
+        flex-direction: column; /* Stack vertically on small screens */
+    }
+
+    .sidebar {
+        width: 100%;
+        position: fixed;
+        top: 0; /* Overlaps header on mobile */
+        left: -100%; /* Hidden by default */
+        height: 100vh;
+        z-index: 1000;
+        transition: left 0.3s ease;
+    }
+
+    .sidebar.active {
+        left: 0; /* Slide in when active - add JS for toggle */
+    }
+
+    .main {
+    flex: 1;
+    padding: 2rem;
+    overflow-y: auto;
+    background-color: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* centers everything inside main */
+    justify-content: flex-start;
+    width: 100%;
+    }
+
+    .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 950px; /* Centers cards nicely beside sidebar */
+    margin: 0 auto 3rem auto;
+    }
+
+
+        /* Center the Quick Overview section beside the sidebar */
+    .overview {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Centers horizontally */
+        justify-content: center;
+        width: 100%;
+    }
+
+    .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        justify-content: center; /* Centers grid within section */
+        align-items: center;
+        gap: 1.5rem;
+        margin: 0 auto 3rem auto; /* centers horizontally */
+        max-width: 950px; /* keeps cards near center beside sidebar */
+    }
+
+
+    .orders th,
+    .orders td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    /* Add a mobile menu button in header if needed */
+    .header-content::after {
+        content: '\f0c9'; /* Font Awesome bars icon */
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        font-size: 1.5rem;
+        cursor: pointer;
+        display: block; /* Show on mobile */
+    }
+}
+
+@media (max-width: 480px) {
+    .header h1 {
+        font-size: 1.5rem;
+    }
+
+    .header-content {
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+
+    .search-bar {
+        order: 3;
+        width: 100%;
+        max-width: 100%;
+        margin: 0.5rem 0 0 0;
+    }
+
+    .logo-title {
+        flex: 1;
+    }
+
+    .user-info {
+        font-size: 0.9rem;
+    }
+
+    .header-content::after {
+        display: block !important; /* Force show burger icon */
+    }
+
+    .metric-card {
+        padding: 1rem;
+    }
+
+    .metric-card .value {
+        font-size: 1.5rem;
+    }
+}
+
+/* Orders Grid - Landscape Card Style */
+.orders-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.order-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.order-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
+}
+
+.order-id {
+    font-weight: bold;
+    color: #6b4e31;
+}
+
+.order-body p {
+    margin: 0.3rem 0;
+    font-size: 0.95rem;
+    color: #444;
+}
+
+/* Responsive Layout */
+@media (max-width: 1024px) {
+    .orders-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .orders-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Activities Section */
+.activities {
+    margin-top: 2rem;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.activities h2 {
+    font-size: 1.8rem;
+    color: #3E2723;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+.activities-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    width: 100%;
+    overflow: hidden;
+}
+
+.activities-list {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 1rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: #8B5A3C #f0f0f0;
+    width: 100%;
+}
+
+.activities-list::-webkit-scrollbar {
+    height: 8px;
+}
+
+.activities-list::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 4px;
+}
+
+.activities-list::-webkit-scrollbar-thumb {
+    background: #8B5A3C;
+    border-radius: 4px;
+}
+
+.activity-card {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1.25rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #8B5A3C;
+    transition: all 0.2s ease;
+    min-width: 280px !important;
+    max-width: 320px !important;
+    flex-shrink: 0 !important;
+    width: auto;
+}
+
+.activity-card:hover {
+    background: #f0f0f0;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.activity-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    margin-top: 0.2rem;
+}
+
+.activity-icon .text-success {
+    color: #4CAF50;
+}
+
+.activity-icon .text-warning {
+    color: #FF9800;
+}
+
+.activity-icon .text-danger {
+    color: #F44336;
+}
+
+.activity-icon .text-info {
+    color: #2196F3;
+}
+
+.activity-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.activity-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.activity-action {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.badge-create {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.badge-update {
+    background-color: #FF9800;
+    color: white;
+}
+
+.badge-delete {
+    background-color: #F44336;
+    color: white;
+}
+
+.activity-entity {
+    font-weight: 600;
+    color: #3E2723;
+    font-size: 0.95rem;
+}
+
+.activity-time {
+    color: #666;
+    font-size: 0.85rem;
+    margin-left: auto;
+    white-space: nowrap;
+}
+
+.activity-details {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    width: 100%;
+}
+
+.activity-user {
+    color: #555;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.activity-role {
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.badge-role-admin {
+    background-color: #F44336;
+    color: white;
+}
+
+.badge-role-staff {
+    background-color: #2196F3;
+    color: white;
+}
+
+.badge-role-user {
+    background-color: #9E9E9E;
+    color: white;
+}
+
+.activity-id {
+    color: #888;
+    font-family: monospace;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #999;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: #ddd;
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    font-size: 1.5rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.empty-state p {
+    font-size: 1rem;
+    color: #999;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* Responsive for Activities */
+@media (max-width: 768px) {
+    .activities-list {
+        flex-direction: column;
+    }
+
+    .activity-card {
+        min-width: 100%;
+        max-width: 100%;
+    }
+
+    .activity-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .activity-time {
+        margin-left: 0;
+    }
+
+    .activity-details {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+}

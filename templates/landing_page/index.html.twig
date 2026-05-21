@@ -1,0 +1,1141 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Harvey's Cafe Shop - Welcome{% endblock %}
+
+{% block body %}
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+    
+    .landing-container {
+        width: 100vw;
+    }
+    
+    /* Hero Section */
+    .hero-section {
+        height: 100vh;
+        background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 50%, #fef3c7 100%);
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    /* Animated coffee beans */
+    .coffee-icon {
+        position: absolute;
+        opacity: 0.1;
+        animation: float 6s ease-in-out infinite;
+    }
+    
+    .coffee-icon-1 {
+        top: 10%;
+        left: 5%;
+        font-size: 4rem;
+        animation-delay: 0s;
+    }
+    
+    .coffee-icon-2 {
+        top: 70%;
+        right: 8%;
+        font-size: 4rem;
+        animation-delay: 2s;
+    }
+    
+    .coffee-icon-3 {
+        bottom: 15%;
+        left: 15%;
+        font-size: 3rem;
+        animation-delay: 4s;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-20px); }
+    }
+    
+    /* Navigation */
+    .nav {
+        background: rgba(82, 32, 4, 0.79);
+        backdrop-filter: blur(10px);
+        padding: 1rem 2rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+    
+    .nav-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #78350f;
+    }
+    
+    .logo svg {
+        width: 2rem;
+        height: 2rem;
+    }
+    
+    .nav-links {
+        display: flex;
+        gap: 2rem;
+        list-style: none;
+        margin-right: -100px;
+    }
+    
+    .nav-links a {
+        color: #ffffff;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+    
+    .nav-links a:hover {
+        color: #fef3c7;
+    }
+    
+    /* Hero Content */
+    .hero-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 2rem;
+    }
+    
+    .hero-title {
+        font-size: 4.5rem;
+        font-weight: bold;
+        color: #78350f;
+        margin-bottom: 1.5rem;
+        animation: fadeInDown 1s ease-out;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.5rem;
+        color: #4b5563;
+        margin-bottom: 2.5rem;
+        max-width: 600px;
+        animation: fadeInUp 1s ease-out 0.2s both;
+    }
+    
+    .cta-button {
+        background: #78350f;
+        color: white;
+        padding: 1.25rem 3rem;
+        font-size: 1.25rem;
+        font-weight: 600;
+        border: none;
+        border-radius: 9999px;
+        cursor: pointer;
+        box-shadow: 0 10px 25px rgba(120, 53, 15, 0.3);
+        transition: all 0.3s ease;
+        animation: fadeInUp 1s ease-out 0.4s both;
+    }
+    
+    .cta-button:hover {
+        background: #92400e;
+        transform: scale(1.05);
+        box-shadow: 0 15px 30px rgba(120, 53, 15, 0.4);
+    }
+    
+    /* Feature Cards */
+    .features {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        padding: 2rem;
+        animation: fadeInUp 1s ease-out 0.6s both;
+    }
+    
+    .feature-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 1rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        min-width: 200px;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .feature-icon {
+        background: #fef3c7;
+        width: 3rem;
+        height: 3rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+    }
+    
+    .feature-icon svg {
+        width: 1.5rem;
+        height: 1.5rem;
+        color: #78350f;
+    }
+    
+    .feature-title {
+        font-weight: bold;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+    }
+    
+    .feature-text {
+        color: #6b7280;
+        font-size: 0.875rem;
+    }
+    
+    /* Section Styles */
+    .section {
+        padding: 5rem 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .section-title {
+        font-size: 3rem;
+        font-weight: bold;
+        color: #78350f;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+    
+    .section-subtitle {
+        font-size: 1.25rem;
+        color: #6b7280;
+        text-align: center;
+        margin-bottom: 3rem;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Intro Extra Sections */
+    .warm-section {
+        background: linear-gradient(135deg, #fff7ed 0%, #fef3c7 100%);
+    }
+
+    .cream-section {
+        background: #ffffff;
+    }
+
+    .storyboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.25rem;
+    }
+
+    .storyboard-card {
+        background: #ffffff;
+        border: 1px solid #fed7aa;
+        border-radius: 1rem;
+        padding: 1.25rem;
+        box-shadow: 0 10px 24px rgba(120, 53, 15, 0.1);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .storyboard-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 14px 30px rgba(120, 53, 15, 0.16);
+    }
+
+    .storyboard-card h3 {
+        color: #78350f;
+        margin-bottom: 0.5rem;
+        font-size: 1.2rem;
+    }
+
+    .storyboard-card p {
+        color: #4b5563;
+        line-height: 1.6;
+    }
+
+    .mini-badge {
+        display: inline-block;
+        margin-bottom: 0.75rem;
+        padding: 0.3rem 0.7rem;
+        border-radius: 9999px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        background: #fef3c7;
+        color: #78350f;
+    }
+
+    .best-seller-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.25rem;
+    }
+
+    .best-seller-item {
+        background: #ffffff;
+        border-radius: 1rem;
+        padding: 1.2rem;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        border: 1px solid #fde68a;
+    }
+
+    .best-seller-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.7rem;
+        color: #78350f;
+        font-weight: 700;
+    }
+
+    .best-seller-item p {
+        color: #6b7280;
+        line-height: 1.6;
+    }
+
+    .moments-layout {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 1.25rem;
+    }
+
+    .moments-main,
+    .moments-side {
+        min-height: 180px;
+        border-radius: 1rem;
+        padding: 1.25rem;
+        color: #78350f;
+        box-shadow: 0 10px 24px rgba(120, 53, 15, 0.12);
+        border: 1px solid #fed7aa;
+    }
+
+    .moments-main {
+        background: linear-gradient(135deg, #fff7ed 0%, #fde68a 100%);
+    }
+
+    .moments-side {
+        background: linear-gradient(135deg, #fef9c3 0%, #fef3c7 100%);
+    }
+
+    .moments-main h3,
+    .moments-side h3 {
+        margin-bottom: 0.6rem;
+        font-size: 1.25rem;
+    }
+
+    .moments-main p,
+    .moments-side p {
+        color: #4b5563;
+        line-height: 1.65;
+    }
+
+    .rewards-strip {
+        background: #78350f;
+        color: #fff;
+        border-radius: 1rem;
+        padding: 1.4rem;
+        display: grid;
+        grid-template-columns: 1.6fr 1fr 1fr;
+        gap: 1rem;
+        box-shadow: 0 10px 28px rgba(120, 53, 15, 0.32);
+    }
+
+    .rewards-strip h3 {
+        font-size: 1.35rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .rewards-strip p {
+        color: #fdebd0;
+        line-height: 1.6;
+    }
+
+    .reward-stat {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 0.85rem;
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .reward-stat strong {
+        display: block;
+        font-size: 1.5rem;
+        margin-bottom: 0.35rem;
+        color: #fef3c7;
+    }
+    
+    /* About Section */
+    .about-section {
+        background: #ffffff;
+    }
+    
+    .about-content {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 3rem;
+        align-items: center;
+    }
+    
+    .about-text {
+        font-size: 1.125rem;
+        line-height: 1.8;
+        color: #4b5563;
+    }
+    
+    .about-text p {
+        margin-bottom: 1.5rem;
+    }
+    
+    .about-image {
+        width: 100%;
+        min-height: 400px;
+        background: linear-gradient(135deg, #fff7ed 0%, #fef3c7 100%);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .team-title {
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: #78350f;
+        margin-bottom: 0.85rem;
+        text-align: left;
+    }
+
+    .team-story {
+        font-size: 1.05rem;
+        line-height: 1.8;
+        color: #4b5563;
+        margin-bottom: 1.25rem;
+        font-weight: 700;
+    }
+
+    .team-story p {
+        margin-bottom: 1rem;
+    }
+
+    .team-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 0.9rem;
+    }
+
+    .team-card {
+        background: #ffffff;
+        border-radius: 0.875rem;
+        padding: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+        text-align: left;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .team-card-leader {
+        padding: 1rem;
+    }
+
+    .team-photo {
+        width: 88px;
+        height: 88px;
+        object-fit: cover;
+        border-radius: 0.75rem;
+        margin-bottom: 0;
+        border: 2px solid #fed7aa;
+        flex: 0 0 auto;
+    }
+
+    .team-name {
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 0.25rem;
+    }
+
+    .team-role {
+        font-size: 0.9rem;
+        color: #6b7280;
+    }
+    
+    /* Menu Preview Section */
+    .menu-section {
+        background: #fef3c7;
+    }
+    
+    .menu-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+    }
+    
+    .menu-item {
+        background: white;
+        border-radius: 1rem;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .menu-item:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .menu-item-image {
+        height: 200px;
+        background: linear-gradient(135deg, #fed7aa 0%, #fef3c7 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+    }
+    
+    .menu-item-content {
+        padding: 1.5rem;
+    }
+    
+    .menu-item-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+    }
+    
+    .menu-item-description {
+        color: #6b7280;
+        margin-bottom: 1rem;
+        line-height: 1.6;
+    }
+    
+    .menu-item-price {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #78350f;
+    }
+    
+    /* Why Choose Us Section */
+    .why-section {
+        background: #ffffff;
+    }
+    
+    .why-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+    }
+    
+    .why-card {
+        text-align: center;
+        padding: 2rem;
+        background: #fef3c7;
+        border-radius: 1rem;
+        transition: transform 0.3s;
+    }
+    
+    .why-card:hover {
+        transform: scale(1.05);
+    }
+    
+    .why-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+    
+    .why-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #1f2937;
+        margin-bottom: 1rem;
+    }
+    
+    .why-text {
+        color: #4b5563;
+        line-height: 1.6;
+    }
+    
+    /* Testimonials Section */
+    .testimonials-section {
+        background: linear-gradient(135deg, #fed7aa 0%, #fef3c7 100%);
+    }
+    
+    .testimonials-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+    
+    .testimonial-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 1rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .testimonial-rating {
+        color: #fbbf24;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .testimonial-text {
+        color: #4b5563;
+        font-style: italic;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+    
+    .testimonial-author {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .testimonial-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #fed7aa 0%, #fef3c7 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+    
+    .testimonial-info h4 {
+        font-weight: bold;
+        color: #1f2937;
+    }
+    
+    .testimonial-info p {
+        color: #6b7280;
+        font-size: 0.875rem;
+    }
+    
+    /* Contact Section */
+    .contact-section {
+        background: #ffffff;
+    }
+    
+    .contact-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+    }
+    
+    .contact-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .contact-item {
+        display: flex;
+        gap: 1rem;
+        align-items: start;
+    }
+    
+    .contact-icon {
+        background: #fef3c7;
+        width: 3rem;
+        height: 3rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+    
+    .contact-details h3 {
+        font-weight: bold;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+    }
+    
+    .contact-details p {
+        color: #4b5563;
+        line-height: 1.6;
+    }
+    
+    .contact-details a {
+        color: #78350f;
+        font-weight: 600;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        transition: color 0.2s ease;
+    }
+    
+    .contact-details a:hover {
+        color: #92400e;
+    }
+    
+    .contact-map {
+        width: 100%;
+        height: 400px;
+        background: linear-gradient(135deg, #fed7aa 0%, #fef3c7 100%);
+        border-radius: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.5rem;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.125rem;
+        }
+        
+        .features {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .nav-links {
+            display: none;
+        }
+        
+        .about-content,
+        .contact-content {
+            grid-template-columns: 1fr;
+        }
+
+        .team-card {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .team-photo {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 16 / 10;
+        }
+        
+        .menu-grid,
+        .why-grid,
+        .testimonials-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .moments-layout,
+        .rewards-strip {
+            grid-template-columns: 1fr;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+        }
+    }
+</style>
+
+<div class="landing-container">
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <!-- Floating Coffee Icons -->
+        <div class="coffee-icon coffee-icon-1">☕</div>
+        <div class="coffee-icon coffee-icon-2">🧁</div>
+        <div class="coffee-icon coffee-icon-3">☕</div>
+        
+        <!-- Navigation -->
+        <nav class="nav">
+            <div class="nav-content">
+                <div class="logo">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    </svg>
+                    <div class="logo">
+                        <img src="{{ asset('img/Logo.png') }}" alt="Harvey's Cafe Logo" style="height: 3rem; margin-left: -150px; opacity: 1.5;">
+                    </div>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#experience">Experience</a></li>
+                    <li><a href="#why">Why Us</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+        </nav>
+        
+        <!-- Hero Content -->
+        <div class="hero-content">
+            <h1 class="hero-title">Welcome to Harvey's Cafe</h1>
+            <p class="hero-subtitle">Where every cup tells a story and every bite brings comfort</p>
+            <button class="cta-button" onclick="window.location.href='{{ path('app_login') }}'">Get Started</button>
+            
+            <!-- Feature Cards -->
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Premium Coffee</h3>
+                    <p class="feature-text">Expertly brewed perfection</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15.546c-.523 0-1.046.151-1.5.454a2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.701 2.701 0 00-1.5-.454M9 6v2m3-2v2m3-2v2M9 3h.01M12 3h.01M15 3h.01M21 21v-7a2 2 0 00-2-2H5a2 2 0 00-2 2v7h18zm-3-9v-2a2 2 0 00-2-2H8a2 2 0 00-2 2v2h12z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Artisan Pastries</h3>
+                    <p class="feature-text">Handcrafted with love</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Cozy Atmosphere</h3>
+                    <p class="feature-text">Your perfect workspace</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Coffee Highlights Section -->
+    <section class="section warm-section">
+        <h2 class="section-title">What Awaits You</h2>
+        <p class="section-subtitle">Every visit at Harvey's Cafe starts with comforting flavors and thoughtful details</p>
+        <div class="storyboard-grid">
+            <div class="storyboard-card">
+                <span class="mini-badge">Freshly Brewed</span>
+                <h3>Bean-to-Cup Quality</h3>
+                <p>Our baristas brew each cup on demand to keep aroma, body, and taste at their peak from first sip to last.</p>
+            </div>
+            <div class="storyboard-card">
+                <span class="mini-badge">Baked Daily</span>
+                <h3>Handmade Pastries</h3>
+                <p>From butter croissants to soft muffins, our pastry selection is prepared fresh each morning for perfect pairings.</p>
+            </div>
+            <div class="storyboard-card">
+                <span class="mini-badge">Anytime Comfort</span>
+                <h3>Calm Cozy Spaces</h3>
+                <p>Choose a sunny corner, a quiet table, or a comfy seat by the wall to match your mood for the day.</p>
+            </div>
+            <div class="storyboard-card">
+                <span class="mini-badge">Made for You</span>
+                <h3>Personal Touch</h3>
+                <p>Customize sweetness, milk, and flavor notes to create a drink that feels truly yours, every single visit.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Best Sellers Section -->
+    <section class="section cream-section">
+        <h2 class="section-title">Best Sellers This Week</h2>
+        <p class="section-subtitle">Guest favorites that keep the cafe full of smiles from morning to evening</p>
+        <div class="best-seller-grid">
+            <article class="best-seller-item">
+                <div class="best-seller-top"><span>Caramel-Macchiato</span><span></span></div>
+                <p>An espresso-based beverage featuring steamed milk, vanilla syrup, and a signature caramel drizzle, creating a sweet, layered coffee drink.</p>
+            </article>
+            <article class="best-seller-item">
+                <div class="best-seller-top"><span>Hazelnut-Coldbrew</span><span></span></div>
+                <p>A smooth, sweetened coffee beverage combining brewed cold coffee with hazelnut syrup, ice, and cream or milk.</p>
+            </article>
+            <article class="best-seller-item">
+                <div class="best-seller-top"><span>Frappuccino</span><span></span></div>
+                <p>A trademarked line of blended, iced coffee beverages. It consists of coffee or espresso blended with ice, milk, and various syrups, typically topped with whipped cream.</p>
+            </article>
+            <article class="best-seller-item">
+                <div class="best-seller-top"><span>Iced-Latte</span><span></span></div>
+                <p>A cold coffee beverage made by combining 1–3 shots of espresso with a large amount of cold milk and ice.</p>
+            </article>
+        </div>
+    </section>
+
+    <!-- Cafe Moments Section -->
+    <section class="section warm-section">
+        <h2 class="section-title">Cafe Moments</h2>
+        <p class="section-subtitle">A place for focus, conversations, and little celebrations in between</p>
+        <div class="moments-layout">
+            <div class="moments-main">
+                <h3>From Early Hours to Late Nights</h3>
+                <p>Whether you are planning your day, building ideas, or winding down with friends, Harvey's Cafe gives you warm lighting, clean tables, and an atmosphere that feels easy to stay in.</p>
+            </div>
+            <div class="moments-side">
+                <h3>Perfect for Meetups</h3>
+                <p>Hold study sessions, friendly catchups, and quick work talks with drinks and pastries always within reach.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rewards Section -->
+    <section class="section cream-section">
+        <h2 class="section-title">Harvey's Rewards</h2>
+        <p class="section-subtitle">Collect points while enjoying your daily favorites</p>
+        <div class="rewards-strip">
+            <div>
+                <h3>Loyalty Perks for Regulars</h3>
+                <p>Earn points for each order and unlock free drinks, pastry discounts, and exclusive member promos every month.</p>
+            </div>
+            <div class="reward-stat">
+                <strong>1 pt</strong>
+                <span>for every ₱30 spent</span>
+            </div>
+            <div class="reward-stat">
+                <strong>50 pts</strong>
+                <span>for a free handcrafted drink</span>
+            </div>
+        </div>
+    </section>
+    
+    <!-- About Section -->
+    <section id="about" class="section about-section">
+        <h2 class="section-title">Our Story</h2>
+        <p class="section-subtitle">A passion for coffee and community since day one</p>
+        <div class="about-content">
+            <div class="about-image">
+                <div>
+                    <div class="team-story">
+                        <p>Harvey's Cafe was born from a simple dream: to create a warm, welcoming space where great coffee meets genuine hospitality. What started as a small corner shop has grown into a beloved community hub.</p>
+                        <p>We source only the finest beans from sustainable farms around the world, roasted to perfection right here in our cafe. Every drink is crafted with care, and every pastry is baked fresh daily by our talented team.</p>
+                        <p>Whether you're here for a quick espresso, a leisurely brunch, or a productive work session, Harvey's Cafe is your home away from home.</p>
+                    </div>
+                    <h3 class="team-title">Meet the Team</h3>
+                    <div class="team-grid">
+                        <div class="team-card team-card-leader">
+                            <img class="team-photo" src="{{ asset('img/Main.jpg') }}" alt="Main photo">
+                            <div>
+                                <div class="team-name">Kian</div>
+                                <div class="team-role">Team Leader & Product Manager</div>
+                            </div>
+                        </div>
+                        <div class="team-card">
+                            <img class="team-photo" src="{{ asset('img/Jennie.jpg') }}" alt="Jennie photo">
+                            <div>
+                                <div class="team-name">Jennie</div>
+                                <div class="team-role">UI/UX Designer</div>
+                            </div>
+                        </div>
+                        <div class="team-card">
+                            <img class="team-photo" src="{{ asset('img/Rose.jpg') }}" alt="Rose photo">
+                            <div>
+                                <div class="team-name">Rosé</div>
+                                <div class="team-role">Frontend Developer</div>
+                            </div>
+                        </div>
+                        <div class="team-card">
+                            <img class="team-photo" src="{{ asset('img/Lisa.jpg') }}" alt="Lisa photo">
+                            <div>
+                                <div class="team-name">Lisa</div>
+                                <div class="team-role">Backend Developer</div>
+                            </div>
+                        </div>
+                        <div class="team-card">
+                            <img class="team-photo" src="{{ asset('img/Jisoo.jpg') }}" alt="Jisoo photo">
+                            <div>
+                                <div class="team-name">Jisoo</div>
+                                <div class="team-role">QA Engineer</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Experience Section -->
+    <section id="experience" class="section menu-section">
+        <h2 class="section-title">The Harvey's Experience</h2>
+        <p class="section-subtitle">More than just coffee - it's a lifestyle</p>
+        <div class="why-grid">
+            <div class="why-card">
+                <div class="why-icon">☕</div>
+                <h3 class="why-title">Morning Ritual</h3>
+                <p class="why-text">Start your day right with our carefully crafted morning blends and fresh breakfast options</p>
+            </div>
+            
+            <div class="why-card">
+                <div class="why-icon">💼</div>
+                <h3 class="why-title">Work & Create</h3>
+                <p class="why-text">Free WiFi, plenty of outlets, and the perfect ambiance for productivity and creativity</p>
+            </div>
+            
+            <div class="why-card">
+                <div class="why-icon">👥</div>
+                <h3 class="why-title">Meet & Connect</h3>
+                <p class="why-text">The ideal spot for catching up with friends or hosting casual business meetings</p>
+            </div>
+            
+            <div class="why-card">
+                <div class="why-icon">🌙</div>
+                <h3 class="why-title">Evening Unwind</h3>
+                <p class="why-text">Relax with specialty drinks and desserts in our cozy, welcoming atmosphere</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Why Choose Us Section -->
+    <section id="why" class="section why-section">
+        <h2 class="section-title">Why Harvey's Cafe?</h2>
+        <p class="section-subtitle">What makes us special</p>
+        <div class="why-grid">
+            <div class="why-card">
+                <div class="why-icon">🌱</div>
+                <h3 class="why-title">Sustainable Sourcing</h3>
+                <p class="why-text">We partner with ethical farms that practice sustainable agriculture and fair trade principles</p>
+            </div>
+            
+            <div class="why-card">
+                <div class="why-icon">👨‍🍳</div>
+                <h3 class="why-title">Expert Baristas</h3>
+                <p class="why-text">Our skilled team brings years of experience and passion to every cup they craft</p>
+            </div>
+            
+            <div class="why-card">
+                <div class="why-icon">🏠</div>
+                <h3 class="why-title">Community Hub</h3>
+                <p class="why-text">More than a cafe - we're a gathering place for friends, creatives, and coffee lovers</p>
+            </div>
+            
+            <div class="why-card">
+                <div class="why-icon">⭐</div>
+                <h3 class="why-title">Quality First</h3>
+                <p class="why-text">We never compromise on quality, from bean selection to the final pour</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Testimonials Section -->
+    <section class="section testimonials-section">
+        <h2 class="section-title">What Our Customers Say</h2>
+        <p class="section-subtitle">Real reviews from real coffee lovers</p>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-rating">★★★★★</div>
+                <p class="testimonial-text">"The best coffee in town! The atmosphere is perfect for getting work done, and the baristas always remember my order. Harvey's has become my second home."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">M</div>
+                    <div class="testimonial-info">
+                        <h4>Maria Santos</h4>
+                        <p>Regular Customer</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-rating">★★★★★</div>
+                <p class="testimonial-text">"Amazing pastries and the friendliest staff! I come here every weekend for their croissants. You can taste the quality in every bite."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">J</div>
+                    <div class="testimonial-info">
+                        <h4>John Cruz</h4>
+                        <p>Coffee Enthusiast</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-rating">★★★★★</div>
+                <p class="testimonial-text">"Harvey's Cafe is a gem! The espresso is perfectly balanced, and the cozy ambiance makes it ideal for catching up with friends or diving into a good book."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">S</div>
+                    <div class="testimonial-info">
+                        <h4>Sarah Reyes</h4>
+                        <p>Local Resident</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Contact Section -->
+    <section id="contact" class="section contact-section">
+        <h2 class="section-title">Visit Us</h2>
+        <p class="section-subtitle">We'd love to see you at Harvey's</p>
+        <div class="contact-content">
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="contact-icon">📍</div>
+                    <div class="contact-details">
+                        <h3>Location</h3>
+                        <p>123 Coffee Street<br>Cebu City, Central Visayas<br>Philippines</p>
+                    </div>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-icon">⏰</div>
+                    <div class="contact-details">
+                        <h3>Hours</h3>
+                        <p>Monday - Friday: 7:00 AM - 9:00 PM<br>Saturday - Sunday: 8:00 AM - 10:00 PM</p>
+                    </div>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-icon">📞</div>
+                    <div class="contact-details">
+                        <h3>Contact</h3>
+                        <p>Phone: (+63) 9071835704<br>Email: hello@harveyscafe.com</p>
+                    </div>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-icon">💬</div>
+                    <div class="contact-details">
+                        <h3>Customer feedback</h3>
+                        <p>Tell us how we did—name, email, address, and your feedback. <a href="https://forms.gle/fSJWsinyDadvvLC89" target="_blank" rel="noopener noreferrer">Open Harvey's Cafe Customers Feedback form</a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="contact-map">
+                🗺️
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,248 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Transaction History{% endblock %}
+{% block page_title %}Transaction History{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .orders-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 0 10px;
+            width: 100%;
+        }
+
+        .orders-header h1 {
+            font-size: 32px;
+            color: #3E2723;
+            margin: 0;
+            font-weight: 600;
+            flex: 0 0 auto;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .table-card {
+            background: white;
+            border: 2px solid #8B5A3C;
+            border-radius: 12px;
+            padding: 30px;
+            overflow-x: auto;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: none;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 16px;
+            table-layout: fixed;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #8B5A3C 0%, #6B4423 100%);
+            color: white;
+        }
+
+        thead th {
+            padding: 20px 18px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-pending {
+            background-color: #FF9800;
+            color: white;
+        }
+
+        .badge-serving {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .badge-completed {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .badge-served {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .badge-cancelled {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .action-form {
+            margin: 0;
+        }
+
+        .btn-done {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-done:hover {
+            background-color: #218838;
+        }
+
+        .btn-done:disabled {
+            background-color: #b5b5b5;
+            cursor: not-allowed;
+        }
+
+        .btn-delete-all {
+            background-color: #dc3545;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-delete-all:hover {
+            background-color: #c82333;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #e0e0e0;
+            transition: background-color 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        tbody td {
+            padding: 18px;
+            color: #333;
+            font-size: 15px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        tbody td:first-child {
+            font-weight: 600;
+            color: #8B5A3C;
+            font-size: 16px;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #999;
+            font-style: italic;
+            padding: 40px !important;
+        }
+
+        @media (max-width: 768px) {
+            .orders-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .table-card {
+                padding: 10px;
+            }
+
+            thead th, tbody td {
+                padding: 10px;
+                font-size: 12px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block main_content %}
+    <div class="orders-header">
+        <h1>💳 Transaction History</h1>
+        <div class="header-actions">
+            <form method="post" action="{{ path('app_transaction_history_clear') }}" onsubmit="return confirm('Delete all transaction records? This action cannot be undone.');">
+                <input type="hidden" name="_token" value="{{ csrf_token('clear_transactions') }}">
+                <button type="submit" class="btn-delete-all">Delete All Records</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="table-card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Total Price</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction in transactions %}
+                    <tr>
+                        <td>{{ transaction.id }}</td>
+                        <td>{{ transaction.order and transaction.order.product ? transaction.order.product.name : 'N/A' }}</td>
+                        <td>{{ transaction.order ? transaction.order.quantity : 0 }}</td>
+                        <td>${{ transaction.amount|number_format(2) }}</td>
+                        <td>
+                            <span class="badge badge-{{ transaction.status|lower }}">
+                                {{ transaction.status }}
+                            </span>
+                        </td>
+                        <td>
+                            <form class="action-form" method="post" action="{{ path('app_transaction_history_done', {id: transaction.id}) }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('transaction_done_' ~ transaction.id) }}">
+                                <button
+                                    type="submit"
+                                    class="btn-done"
+                                    {% if transaction.status|upper != 'SERVING' %}disabled{% endif %}
+                                >
+                                    DONE
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="no-data">No transactions found.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+

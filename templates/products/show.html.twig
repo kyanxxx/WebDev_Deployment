@@ -1,0 +1,170 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Product Details - Harvey's Cafe{% endblock %}
+
+{% block page_title %}Product Details{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .product-form-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 60px;
+            min-height: calc(100vh - 80px);
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 900px;
+            margin-left: 40px;
+        }
+
+        .form-header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .form-header h1 {
+            font-size: 28px;
+            color: #333;
+            margin: 0;
+        }
+
+        .product-details {
+            margin-bottom: 30px;
+        }
+
+        .detail-item {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 20px;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-item label {
+            font-weight: 600;
+            color: #555;
+            font-size: 16px;
+        }
+
+        .detail-item p {
+            margin: 0;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            padding-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .price-detail {
+            margin: 4px 0 0;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+{% endblock %}
+
+{% block main_content %}
+<div class="product-form-container">
+    <div class="form-card">
+        <div class="form-header">
+            <h1>📦 Product Details</h1>
+        </div>
+
+        <div class="product-details">
+            <div class="detail-item">
+                <label>ID:</label>
+                <p>{{ product.id }}</p>
+            </div>
+
+            <div class="detail-item">
+                <label>Name:</label>
+                <p>{{ product.name }}</p>
+            </div>
+
+            <div class="detail-item">
+                <label>Description:</label>
+                <p>{{ product.description }}</p>
+            </div>
+
+            <div class="detail-item">
+                <label>Price:</label>
+                <p>
+                    ${{ totalPrice|number_format(2) }}
+                    {% if orderQuantity > 1 %}
+                        <span class="price-detail">(${{ product.price|number_format(2) }} each × {{ orderQuantity }})</span>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a href="{{ path('app_products_index') }}" class="btn btn-secondary">← Back to list</a>
+            <a href="{{ path('app_products_edit', {'id': product.id}) }}" class="btn btn-success">✏️ Edit</a>
+
+            <form method="post" action="{{ path('app_orders_create_from_product', {'id': product.id}) }}" style="display:inline;">
+                <input type="hidden" name="_token" value="{{ csrf_token('order-' ~ product.id) }}">
+                <input type="hidden" name="quantity" value="{{ orderQuantity }}">
+                <button type="submit" class="btn btn-primary">🛒 Submit Order</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

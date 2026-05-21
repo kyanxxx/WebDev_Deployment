@@ -1,0 +1,498 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Harvey's Cafe - Your Cafe Shop{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .admin-dashboard-shell {
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .admin-hero {
+            background: linear-gradient(135deg, #3b2a1a 0%, #6b4e31 45%, #8b4513 100%);
+            border-radius: 18px;
+            padding: 2rem;
+            color: #fff;
+            box-shadow: 0 20px 40px rgba(43, 26, 12, 0.2);
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .admin-hero::after {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            right: -120px;
+            top: -120px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .admin-hero h1 {
+            margin: 0 0 0.4rem;
+            font-size: 1.9rem;
+            font-weight: 700;
+        }
+
+        .admin-hero p {
+            margin: 0;
+            color: rgba(255, 255, 255, 0.9);
+            max-width: 650px;
+        }
+
+        .admin-quick-links {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .admin-quick-link {
+            background: #fff;
+            border: 1px solid #efebe8;
+            border-radius: 14px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            text-decoration: none;
+            color: #4f3a26;
+            box-shadow: 0 8px 18px rgba(92, 60, 34, 0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .admin-quick-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px rgba(92, 60, 34, 0.15);
+        }
+
+        .admin-quick-link i {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #f7f0ea;
+            color: #8b4513;
+        }
+
+        .overview {
+            width: 100%;
+        }
+
+        .overview > h2 {
+            margin-bottom: 1rem;
+            color: #4a3422;
+            border-bottom: none;
+        }
+
+        .metric-card {
+            border: 1px solid #ece7e2;
+            border-radius: 16px;
+            box-shadow: 0 10px 24px rgba(63, 38, 14, 0.08);
+            position: relative;
+        }
+
+        .metric-card .icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 12px;
+            margin: 0 auto 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #f7f0ea;
+        }
+
+        .dashboard-info {
+            margin-top: 2.2rem;
+            padding: 1.6rem;
+            background: linear-gradient(135deg, #ffffff 0%, #fbf6f2 100%);
+            border: 1px solid #efe7df;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(54, 35, 18, 0.06);
+            text-align: center;
+        }
+
+        @media (max-width: 900px) {
+            .admin-quick-links {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Force horizontal layout for activities */
+        .activities-list {
+            display: flex !important;
+            flex-direction: row !important;
+            gap: 1rem !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            padding-bottom: 10px !important;
+            width: 100% !important;
+        }
+
+        .activity-card {
+            display: flex !important;
+            flex-direction: column !important;
+            min-width: 280px !important;
+            max-width: 320px !important;
+            flex-shrink: 0 !important;
+        }
+        .staff-interface {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .staff-welcome-card {
+            background: linear-gradient(135deg, #4f3422 0%, #6b4e31 45%, #8b4513 100%);
+            border-radius: 22px;
+            padding: 2.2rem;
+            box-shadow: 0 16px 40px rgba(71, 43, 19, 0.22);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .staff-welcome-card::after {
+            content: '';
+            position: absolute;
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            top: -130px;
+            right: -90px;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .staff-welcome-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .staff-welcome-content h2 {
+            color: #fff;
+            font-size: 2rem;
+            margin-bottom: 0.6rem;
+            font-weight: 700;
+        }
+
+        .staff-welcome-content p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.02rem;
+            margin-bottom: 1.4rem;
+            max-width: 650px;
+        }
+
+        .staff-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .staff-btn-primary,
+        .staff-btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.55rem;
+            text-decoration: none;
+            border-radius: 999px;
+            font-weight: 600;
+            padding: 0.8rem 1.35rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+            border: 1px solid transparent;
+        }
+
+        .staff-btn-primary {
+            background: #fff;
+            color: #5d3e26;
+            box-shadow: 0 8px 18px rgba(18, 12, 8, 0.2);
+        }
+
+        .staff-btn-primary:hover {
+            transform: translateY(-2px);
+            background: #fff7f1;
+        }
+
+        .staff-btn-secondary {
+            background: rgba(255, 255, 255, 0.14);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .staff-btn-secondary:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.22);
+        }
+
+        .staff-panel-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1rem;
+        }
+
+        .staff-panel {
+            background: #fff;
+            border: 1px solid #ece5df;
+            border-radius: 16px;
+            box-shadow: 0 10px 24px rgba(67, 40, 19, 0.08);
+            padding: 1.1rem;
+        }
+
+        .staff-panel .panel-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #8b4513;
+            background: #f7f0ea;
+            margin-bottom: 0.75rem;
+        }
+
+        .staff-panel h3 {
+            margin: 0 0 0.4rem;
+            font-size: 1.03rem;
+            color: #3f2c1d;
+        }
+
+        .staff-panel p {
+            margin: 0 0 0.85rem;
+            color: #735946;
+            font-size: 0.94rem;
+        }
+
+        .staff-panel a {
+            color: #6b4e31;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.92rem;
+        }
+
+        .staff-panel a:hover {
+            text-decoration: underline;
+        }
+
+        .staff-shift-tip {
+            background: linear-gradient(135deg, #fff 0%, #fdf8f3 100%);
+            border: 1px solid #eee3d8;
+            border-radius: 16px;
+            padding: 1rem 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+            color: #5a4433;
+            box-shadow: 0 6px 16px rgba(82, 49, 22, 0.06);
+        }
+
+        .staff-shift-tip i {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: #f3e5d8;
+            color: #8b4513;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media (max-width: 768px) {
+            .staff-welcome-card {
+                padding: 1.5rem;
+            }
+
+            .staff-welcome-content h2 {
+                font-size: 1.65rem;
+            }
+
+            .staff-welcome-content p {
+                font-size: 0.96rem;
+            }
+
+            .staff-actions {
+                flex-direction: column;
+            }
+
+            .staff-btn-primary,
+            .staff-btn-secondary {
+                width: 100%;
+            }
+
+            .staff-panel-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block main_content %}
+    {% if is_granted('ROLE_ADMIN') %}
+    <div class="admin-dashboard-shell">
+        <section class="admin-hero">
+            <h1>Admin Operations Dashboard</h1>
+            <p>Monitor user growth, manage products and orders, and keep day-to-day cafe operations running smoothly from one place.</p>
+        </section>
+
+        <section class="admin-quick-links">
+            <a href="{{ path('app_user_index') }}" class="admin-quick-link">
+                <i class="fas fa-users-cog"></i>
+                <span>User Management</span>
+            </a>
+            <a href="{{ path('app_products_index') }}" class="admin-quick-link">
+                <i class="fas fa-box-open"></i>
+                <span>Manage Products</span>
+            </a>
+            <a href="{{ path('app_order_form') }}" class="admin-quick-link">
+                <i class="fas fa-receipt"></i>
+                <span>View Orders</span>
+            </a>
+        </section>
+
+        <section class="overview">
+            <h2>Quick Overview</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <i class="fas fa-users icon"></i>
+                    <h3>Total Users</h3>
+                    <p class="value" id="stat-total-users">{{ stats.totalUsers ?? 0 }}</p>
+                    <span class="trend">All registered users</span>
+                </div>
+                <div class="metric-card">
+                    <i class="fas fa-user-tie icon"></i>
+                    <h3>Total Staff</h3>
+                    <p class="value" id="stat-total-staff">{{ stats.totalStaff ?? 0 }}</p>
+                    <span class="trend">Staff members</span>
+                </div>
+                <div class="metric-card">
+                    <i class="fas fa-database icon"></i>
+                    <h3>Total Records</h3>
+                    <p class="value" id="stat-total-records">{{ stats.totalRecords ?? 0 }}</p>
+                    <span class="trend" id="stat-records-breakdown">{{ stats.totalProducts ?? 0 }} products, {{ stats.totalOrders ?? 0 }} orders</span>
+                </div>
+                <div class="metric-card">
+                    <i class="fas fa-shopping-cart icon"></i>
+                    <h3>Products</h3>
+                    <p class="value" id="stat-total-products">{{ stats.totalProducts ?? 0 }}</p>
+                    <span class="trend">Total products</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Information Section -->
+        <section class="dashboard-info">
+            <p style="color: #6b4e31; font-size: 1.8rem; font-weight: 600; font-style: italic; margin: 0;">
+                "Brewing Excellence, One Cup at a Time"
+            </p>
+        </section>
+    </div>
+    {% endif %}
+
+    {% if is_granted('ROLE_STAFF') and not is_granted('ROLE_ADMIN') %}
+    <!-- Staff Main Interface -->
+    <section class="staff-interface">
+        <div class="staff-welcome-card">
+            <div class="staff-welcome-content">
+                <h2>Staff Operations Dashboard</h2>
+                <p>Handle customer orders, maintain menu availability, and keep service quality high during your shift.</p>
+                <div class="staff-actions">
+                    <a href="{{ path('app_products_index') }}" class="staff-btn-primary">
+                        <i class="fas fa-cart-plus"></i>
+                        Start New Order
+                    </a>
+                    <a href="{{ path('app_order_form') }}" class="staff-btn-secondary">
+                        <i class="fas fa-clipboard-list"></i>
+                        Open Orders Queue
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="staff-panel-grid">
+            <article class="staff-panel">
+                <span class="panel-icon"><i class="fas fa-receipt"></i></span>
+                <h3>Order Management</h3>
+                <p>Review incoming orders quickly and make sure each item is captured correctly.</p>
+                <a href="{{ path('app_order_form') }}">Go to orders <i class="fas fa-arrow-right"></i></a>
+            </article>
+
+            <article class="staff-panel">
+                <span class="panel-icon"><i class="fas fa-box-open"></i></span>
+                <h3>Product Availability</h3>
+                <p>Check product status and update menu items before peak customer hours.</p>
+                <a href="{{ path('app_products_index') }}">Manage products <i class="fas fa-arrow-right"></i></a>
+            </article>
+
+            <article class="staff-panel">
+                <span class="panel-icon"><i class="fas fa-history"></i></span>
+                <h3>Transaction History</h3>
+                <p>Track completed transactions and verify payment records for the day.</p>
+                <a href="{{ path('app_transaction_history_index') }}">View history <i class="fas fa-arrow-right"></i></a>
+            </article>
+        </div>
+
+        <div class="staff-shift-tip">
+            <i class="fas fa-lightbulb"></i>
+            <span>Shift tip: Confirm item availability at the start of each shift to reduce order delays and improve customer satisfaction.</span>
+        </div>
+    </section>
+    {% endif %}
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% if is_granted('ROLE_ADMIN') %}
+    <script>
+        (function () {
+            const endpoint = "{{ path('app_dashboard_stats') }}";
+            const intervalMs = 10000;
+
+            const elTotalUsers = document.getElementById('stat-total-users');
+            const elTotalStaff = document.getElementById('stat-total-staff');
+            const elTotalProducts = document.getElementById('stat-total-products');
+            const elTotalRecords = document.getElementById('stat-total-records');
+            const elRecordsBreakdown = document.getElementById('stat-records-breakdown');
+
+            if (!elTotalUsers || !elTotalStaff || !elTotalProducts || !elTotalRecords || !elRecordsBreakdown) {
+                return;
+            }
+
+            const updateStats = async () => {
+                try {
+                    const response = await fetch(endpoint, {
+                        method: 'GET',
+                        headers: { 'Accept': 'application/json' },
+                        cache: 'no-store'
+                    });
+
+                    if (!response.ok) {
+                        return;
+                    }
+
+                    const stats = await response.json();
+                    elTotalUsers.textContent = stats.totalUsers ?? 0;
+                    elTotalStaff.textContent = stats.totalStaff ?? 0;
+                    elTotalProducts.textContent = stats.totalProducts ?? 0;
+                    elTotalRecords.textContent = stats.totalRecords ?? 0;
+                    elRecordsBreakdown.textContent = `${stats.totalProducts ?? 0} products, ${stats.totalOrders ?? 0} orders`;
+                } catch (error) {
+                    // Silent fail to avoid disrupting dashboard usage on transient network issues.
+                }
+            };
+
+            updateStats();
+            setInterval(updateStats, intervalMs);
+        })();
+    </script>
+    {% endif %}
+{% endblock %}

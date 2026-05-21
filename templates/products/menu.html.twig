@@ -1,0 +1,272 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Harvey's Café - Menu / Products{% endblock %}
+
+{% block page_title %}Menu / Products{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .menu-section {
+            padding: 30px;
+        }
+
+        .menu-section h2 {
+            font-size: 28px;
+            color: #3E2723;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+            margin-bottom: 40px;
+            max-width: 1400px;
+        }
+
+        .menu-card {
+            background: white;
+            border: 2px solid #8B5A3C;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(139, 90, 60, 0.25);
+        }
+
+        .menu-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 2px solid #8B5A3C;
+        }
+
+        .menu-card-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-card h3 {
+            font-size: 20px;
+            color: #3E2723;
+            margin: 0 0 10px 0;
+            font-weight: 600;
+        }
+
+        .menu-card p {
+            font-size: 14px;
+            color: #666;
+            margin: 0 0 15px 0;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+
+        .menu-card .price {
+            font-size: 22px;
+            color: #8B5A3C;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .menu-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .menu-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+
+            .menu-card img {
+                height: 150px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block main_content %}
+    <section class="menu-section">
+        <h2>Coffee Classics</h2>
+        <div class="menu-grid">
+            <!-- Product 1 -->
+            <div class="menu-card">
+                <img src="{{ asset('img/iced-latte.jpg') }}" alt="Iced Latte">
+                <div class="menu-card-content">
+                    <h3>Iced Latte</h3>
+                    <p>Cool and creamy espresso with milk over ice.</p>
+                    <p class="price">$4.50</p>
+                </div>
+            </div>
+
+            <!-- Product 2 -->
+            <div class="menu-card">
+                <img src="{{ asset('img/caramel-macchiato.jpg') }}" alt="Caramel Macchiato">
+                <div class="menu-card-content">
+                    <h3>Caramel Macchiato</h3>
+                    <p>Rich espresso layered with vanilla and caramel.</p>
+                    <p class="price">$5.20</p>
+                </div>
+            </div>
+
+            <!-- Product 3 -->
+            <div class="menu-card">
+                <img src="{{ asset('img/mocha.jpg') }}" alt="Mocha">
+                <div class="menu-card-content">
+                    <h3>Mocha</h3>
+                    <p>Espresso with chocolate and steamed milk.</p>
+                    <p class="price">$4.80</p>
+                </div>
+            </div>
+
+            <!-- Product 4 -->
+            <div class="menu-card">
+                <img src="{{ asset('img/cappuccino.jpg') }}" alt="Cappuccino">
+                <div class="menu-card-content">
+                    <h3>Cappuccino</h3>
+                    <p>Espresso topped with steamed milk foam.</p>
+                    <p class="price">$4.00</p>
+                </div>
+            </div>
+
+            <!-- Product 5 -->
+            <div class="menu-card">
+                <img src="{{ asset('img/Americano.jpg') }}" alt="Americano">
+                <div class="menu-card-content">
+                    <h3>Americano</h3>
+                    <p>Smooth espresso diluted with hot water.</p>
+                    <p class="price">$3.80</p>
+                </div>
+            </div>
+
+            <!-- Product 6 -->
+            <div class="menu-card">
+                <img src="{{ asset('img/frappuccino.jpg') }}" alt="Frappuccino">
+                <div class="menu-card-content">
+                    <h3>Frappuccino</h3>
+                    <p>Blended ice coffee with sweet whipped cream.</p>
+                    <p class="price">$5.50</p>
+                </div>
+            </div>
+
+            <!-- Product 7 -->
+            <div class="menu-card">
+                <img src="{{ asset('img/vanilla-latte.jpg') }}" alt="Vanilla Latte">
+                <div class="menu-card-content">
+                    <h3>Vanilla Latte</h3>
+                    <p>Espresso mixed with steamed milk and vanilla syrup.</p>
+                    <p class="price">$4.70</p>
+                </div>
+            </div>
+
+            <!-- Product 8 -->
+            <div class="menu-card">
+                <img src="{{ asset('img/hazelnut-coldbrew.jpg') }}" alt="Hazelnut Cold Brew">
+                <div class="menu-card-content">
+                    <h3>Hazelnut Cold Brew</h3>
+                    <p>Chilled slow-brew coffee with hazelnut flavor.</p>
+                    <p class="price">$5.10</p>
+                </div>
+            </div>
+        </div>
+
+        <h2>Tea &amp; Non-Coffee</h2>
+        <div class="menu-grid">
+            <div class="menu-card">
+                <img src="{{ asset('img/Thai-Iced-Tea.jpg') }}" alt="Thai Tea">
+                <div class="menu-card-content">
+                    <h3>Thai Tea</h3>
+                    <p>Black tea sweetened with condensed milk—iced or hot.</p>
+                    <p class="price">$4.50</p>
+                </div>
+            </div>
+            <div class="menu-card">
+                <img src="{{ asset('img/chai-tea.jpg') }}" alt="Chai Tea">
+                <div class="menu-card-content">
+                    <h3>Chai Tea</h3>
+                    <p>Warm spices steeped with black tea and steamed milk.</p>
+                    <p class="price">$4.50</p>
+                </div>
+            </div>
+            <div class="menu-card">
+                <img src="{{ asset('img/Matcha-Latte.jpg') }}" alt="Matcha Latte">
+                <div class="menu-card-content">
+                    <h3>Matcha Latte</h3>
+                    <p>Stone-ground green tea whisked with steamed milk.</p>
+                    <p class="price">$5.50</p>
+                </div>
+            </div>
+            <div class="menu-card">
+                <img src="{{ asset('img/hot-chocolate-coffee.jpg') }}" alt="Hot Chocolate">
+                <div class="menu-card-content">
+                    <h3>Hot Chocolate</h3>
+                    <p>Rich cocoa with steamed milk and a cloud of whipped cream.</p>
+                    <p class="price">$4.50</p>
+                </div>
+            </div>
+            <div class="menu-card">
+                <img src="{{ asset('img/herbal-tea.jpg') }}" alt="Herbal Tea">
+                <div class="menu-card-content">
+                    <h3>Herbal Tea</h3>
+                    <p>Caffeine-free botanical blend—ask for today’s selection.</p>
+                    <p class="price">$3.50</p>
+                </div>
+            </div>
+        </div>
+
+        <h2>Pastries &amp; Snacks</h2>
+        <div class="menu-grid">
+            <div class="menu-card">
+                <img src="{{ asset('img/Croissant.jpg') }}" alt="Croissant">
+                <div class="menu-card-content">
+                    <h3>Croissant</h3>
+                    <p>Buttery, flaky layers baked fresh for the morning rush.</p>
+                    <p class="price">$3.50</p>
+                </div>
+            </div>
+            <div class="menu-card">
+                <img src="{{ asset('img/blueberry-muffins.jpg') }}" alt="Blueberry Muffin">
+                <div class="menu-card-content">
+                    <h3>Blueberry Muffin</h3>
+                    <p>Moist muffin studded with wild blueberries.</p>
+                    <p class="price">$3.00</p>
+                </div>
+            </div>
+            <div class="menu-card">
+                <img src="{{ asset('img/Chocolate-Cookies.jpg') }}" alt="Chocolate Cookie">
+                <div class="menu-card-content">
+                    <h3>Chocolate Cookie</h3>
+                    <p>Soft-baked cookie with melty dark chocolate chunks.</p>
+                    <p class="price">$2.50</p>
+                </div>
+            </div>
+            <div class="menu-card">
+                <img src="{{ asset('img/Avocado Toast.jpg') }}" alt="Avocado Toast">
+                <div class="menu-card-content">
+                    <h3>Avocado Toast</h3>
+                    <p>Smashed avocado on artisan toast with sea salt and citrus.</p>
+                    <p class="price">$6.50</p>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+

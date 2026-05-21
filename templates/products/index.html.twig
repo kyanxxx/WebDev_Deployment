@@ -1,0 +1,363 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Products - Cafe Dashboard{% endblock %}
+
+{% block page_title %}Order Management{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .products-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 0 10px;
+            width: 100%;
+        }
+
+        .products-header h1 {
+            font-size: 32px;
+            color: #3E2723;
+            margin: 0;
+            font-weight: 600;
+            flex: 0 0 auto;
+        }
+
+        .products-header .btn-primary {
+            flex: 0 0 auto;
+            margin-left: auto;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8B5A3C 0%, #6B4423 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 90, 60, 0.3);
+        }
+
+        .btn-info {
+            background-color: #2196F3;
+            color: white;
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .btn-info:hover {
+            background-color: #1976D2;
+        }
+
+        .btn-warning {
+            background-color: #FF9800;
+            color: white;
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .btn-warning:hover {
+            background-color: #F57C00;
+        }
+
+        .menu-section {
+            padding: 30px;
+        }
+
+        .menu-section h2 {
+            font-size: 28px;
+            color: #3E2723;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+            margin-bottom: 40px;
+            max-width: 1400px;
+        }
+
+        .menu-grid > h2 {
+            grid-column: 1 / -1;
+            margin-top: 28px;
+        }
+
+        .menu-grid > h2:first-child {
+            margin-top: 0;
+        }
+
+        .menu-card {
+            background: white;
+            border: 2px solid #8B5A3C;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(139, 90, 60, 0.25);
+        }
+
+        .menu-card-image-wrapper {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            border-bottom: 2px solid #8B5A3C;
+            background: linear-gradient(135deg, #8B5A3C 0%, #6B4423 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .menu-card-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-card h3 {
+            font-size: 20px;
+            color: #3E2723;
+            margin: 0 0 10px 0;
+            font-weight: 600;
+        }
+
+        .menu-card p {
+            font-size: 14px;
+            color: #666;
+            margin: 0 0 15px 0;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+
+        .menu-card .price {
+            font-size: 22px;
+            color: #8B5A3C;
+            font-weight: 700;
+            margin: 0 0 15px 0;
+        }
+
+        .menu-card-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .menu-card-actions a,
+        .menu-card-actions form {
+            flex: 1;
+        }
+
+        .menu-card-actions a {
+            padding: 10px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .menu-card-actions form button {
+            width: 100%;
+            padding: 10px;
+            text-align: center;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: inherit;
+        }
+
+        .menu-card-actions .btn-view {
+            background: #8B5A3C;
+            color: white;
+        }
+
+        .menu-card-actions .btn-view:hover {
+            background: #6B4423;
+        }
+
+        .menu-card-actions .btn-edit {
+            background: #6c757d;
+            color: white;
+        }
+
+        .menu-card-actions .btn-edit:hover {
+            background: #5a6268;
+        }
+
+        .menu-card-actions .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        .menu-card-actions .btn-delete:hover {
+            background: #c82333;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #999;
+            font-style: italic;
+            padding: 40px !important;
+            grid-column: 1 / -1;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .menu-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .products-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .menu-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+
+            .menu-card-image-wrapper {
+                height: 150px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <script>
+        function confirmDelete(productName) {
+            return confirm('⚠️ WARNING: Are you sure you want to delete "' + productName + '"?\n\nThis action cannot be undone. The product will be permanently removed from the system.');
+        }
+    </script>
+{% endblock %}
+
+{% block main_content %}
+    <div class="products-header">
+        <h1>☕ Order Now</h1>
+        <a href="{{ path('app_products_new') }}" class="btn btn-primary">＋ Create New</a>
+    </div>
+
+    {% if searchQuery is defined and searchQuery is not empty %}
+        <div style="padding: 15px 20px; margin: 20px auto; max-width: 1400px; background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; border-radius: 8px; display: flex; align-items: center; justify-content: space-between;">
+            <span><i class="fas fa-info-circle"></i> Showing results for "<strong>{{ searchQuery }}</strong>" ({{ products|length }} found)</span>
+            <a href="{{ path('app_products_index') }}" style="color: #0c5460; text-decoration: underline;">Clear search</a>
+        </div>
+    {% endif %}
+
+    <section class="menu-section">
+        {% set productImageMap = {
+            'Thai Tea': 'Thai-Iced-Tea.jpg',
+            'Matcha Latte': 'Matcha-Latte.jpg',
+            'Hot Chocolate': 'hot-chocolate-coffee.jpg',
+            'Croissant': 'Croissant.jpg',
+            'Blueberry Muffin': 'blueberry-muffins.jpg',
+            'Chocolate Cookie': 'Chocolate-Cookies.jpg',
+            'Avocado Toast': 'Avocado Toast.jpg',
+            'Hazelnut Cold Brew': 'hazelnut-coldbrew.jpg'
+        } %}
+        {% if searchQuery is defined and searchQuery is not empty %}
+            <h2>Search Results</h2>
+        {% endif %}
+        <div class="menu-grid">
+            {% if searchQuery is defined and searchQuery is not empty %}
+                {# Show search results from database #}
+                {% for product in products %}
+                    {% set imageName = productImageMap[product.name] ?? (product.name|lower|replace({' ': '-'}) ~ '.jpg') %}
+                    {% set imagePath = 'img/' ~ imageName %}
+                    <div class="menu-card">
+                        <div class="menu-card-image-wrapper">
+                            <img src="{{ asset(imagePath) }}" alt="{{ product.name }}" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'200\'%3E%3Crect fill=\'%238B5A3C\' width=\'200\' height=\'200\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'white\' font-size=\'48\'%3E☕%3C/text%3E%3C/svg%3E';">
+                        </div>
+                        <div class="menu-card-content">
+                            <h3>{{ product.name }}</h3>
+                            <p>{{ product.description ?? 'Delicious coffee beverage' }}</p>
+                            <p class="price">${{ product.price|number_format(2) }}</p>
+                            <div class="menu-card-actions">
+                                <a href="{{ path('app_products_show', {'id': product.id}) }}" class="btn-view">View</a>
+                                <a href="{{ path('app_products_edit', {'id': product.id}) }}" class="btn-edit">Edit</a>
+                                <form method="post" action="{{ path('app_products_delete', {'id': product.id}) }}" onsubmit="return confirmDelete('{{ product.name|e('js') }}');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <button type="submit" class="btn-delete">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="no-data">
+                        <i class="fas fa-search" style="font-size: 48px; margin-bottom: 20px; opacity: 0.3;"></i>
+                        <p style="font-size: 18px;">No products found matching "{{ searchQuery }}".</p>
+                        <p style="font-size: 14px; margin-top: 10px;">Try a different search term.</p>
+                    </div>
+                {% endfor %}
+            {% else %}
+                {# Always render from database to reflect latest edits #}
+                {% for product in products %}
+                    {% set imageName = productImageMap[product.name] ?? (product.name|lower|replace({' ': '-'}) ~ '.jpg') %}
+                    {% set imagePath = 'img/' ~ imageName %}
+                    <div class="menu-card">
+                        <div class="menu-card-image-wrapper">
+                            <img src="{{ asset(imagePath) }}" alt="{{ product.name }}" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'200\'%3E%3Crect fill=\'%238B5A3C\' width=\'200\' height=\'200\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'white\' font-size=\'48\'%3E☕%3C/text%3E%3C/svg%3E';">
+                        </div>
+                        <div class="menu-card-content">
+                            <h3>{{ product.name }}</h3>
+                            <p>{{ product.description ?? 'Delicious coffee beverage' }}</p>
+                            <p class="price">${{ product.price|number_format(2) }}</p>
+                            <div class="menu-card-actions">
+                                <a href="{{ path('app_products_show', {'id': product.id}) }}" class="btn-view">View</a>
+                                <a href="{{ path('app_products_edit', {'id': product.id}) }}" class="btn-edit">Edit</a>
+                                <form method="post" action="{{ path('app_products_delete', {'id': product.id}) }}" onsubmit="return confirmDelete('{{ product.name|e('js') }}');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <button type="submit" class="btn-delete">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="no-data">
+                        <i class="fas fa-coffee" style="font-size: 48px; margin-bottom: 20px; opacity: 0.3;"></i>
+                        <p style="font-size: 18px;">No products found.</p>
+                        <p style="font-size: 14px; margin-top: 10px;">Create your first product to get started.</p>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}

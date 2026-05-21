@@ -1,0 +1,196 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User Details - Admin Dashboard{% endblock %}
+
+{% block page_title %}User Details: {{ user.username }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .detail-card {
+            background: white;
+            border: 2px solid #8B5A3C;
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 700px;
+            margin: 0 auto;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .detail-row {
+            display: flex;
+            padding: 20px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #3E2723;
+            width: 150px;
+            flex-shrink: 0;
+        }
+
+        .detail-value {
+            color: #333;
+            flex: 1;
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+
+        .badge-admin {
+            background-color: #F44336;
+            color: white;
+        }
+
+        .badge-staff {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .badge-user {
+            background-color: #9E9E9E;
+            color: white;
+        }
+
+        .badge-active {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .badge-disabled {
+            background-color: #FF9800;
+            color: white;
+        }
+
+        .badge-archived {
+            background-color: #9E9E9E;
+            color: white;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8B5A3C 0%, #6B4423 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 90, 60, 0.3);
+        }
+
+        .btn-warning {
+            background-color: #FF9800;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background-color: #F57C00;
+        }
+
+        .btn-secondary {
+            background-color: #9E9E9E;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #757575;
+        }
+
+        @media (max-width: 768px) {
+            .detail-row {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .detail-label {
+                width: 100%;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block main_content %}
+    <div class="detail-card">
+        <div class="detail-row">
+            <div class="detail-label">ID:</div>
+            <div class="detail-value">{{ user.id }}</div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">Username:</div>
+            <div class="detail-value"><strong>{{ user.username }}</strong></div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">Email:</div>
+            <div class="detail-value">{{ user.email ?? 'N/A' }}</div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">Role:</div>
+            <div class="detail-value">
+                {% if 'ROLE_ADMIN' in user.roles %}
+                    <span class="badge badge-admin">Admin</span>
+                {% elseif 'ROLE_STAFF' in user.roles %}
+                    <span class="badge badge-staff">Staff</span>
+                {% else %}
+                    <span class="badge badge-user">User</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">Status:</div>
+            <div class="detail-value">
+                {% if user.status == 'active' %}
+                    <span class="badge badge-active">Active</span>
+                {% elseif user.status == 'disabled' %}
+                    <span class="badge badge-disabled">Disabled</span>
+                {% elseif user.status == 'archived' %}
+                    <span class="badge badge-archived">Archived</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">Date Created:</div>
+            <div class="detail-value">{{ user.createdAt ? user.createdAt|date('Y-m-d H:i:s') : 'N/A' }}</div>
+        </div>
+
+        <div class="action-buttons">
+            <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-warning">Edit User</a>
+            <a href="{{ path('app_user_index') }}" class="btn btn-secondary">Back to List</a>
+        </div>
+    </div>
+{% endblock %}
+
