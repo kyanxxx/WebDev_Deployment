@@ -19,10 +19,30 @@ final class Version20251015042146 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE orders ADD customer_id INT DEFAULT NULL, ADD status VARCHAR(50) NOT NULL, ADD created_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
-        $this->addSql('ALTER TABLE orders ADD CONSTRAINT FK_E52FFDEE9395C3F3 FOREIGN KEY (customer_id) REFERENCES user (id)');
-        $this->addSql('CREATE INDEX IDX_E52FFDEE9395C3F3 ON orders (customer_id)');
+        if (!$schema->hasTable('orders')) {
+            return;
+        }
+
+        $orders = $schema->getTable('orders');
+        $hadCustomerId = $orders->hasColumn('customer_id');
+        $changes = [];
+        if (!$hadCustomerId) {
+            $changes[] = 'ADD customer_id INT DEFAULT NULL';
+        }
+        if (!$orders->hasColumn('status')) {
+            $changes[] = 'ADD status VARCHAR(50) NOT NULL DEFAULT \'Pending\'';
+        }
+        if (!$orders->hasColumn('created_at')) {
+            $changes[] = 'ADD created_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\'';
+        }
+        if ($changes !== []) {
+            $this->addSql('ALTER TABLE orders '.implode(', ', $changes));
+        }
+
+        if (!$hadCustomerId) {
+            $this->addSql('ALTER TABLE orders ADD CONSTRAINT FK_E52FFDEE9395C3F3 FOREIGN KEY (customer_id) REFERENCES user (id)');
+            $this->addSql('CREATE INDEX IDX_E52FFDEE9395C3F3 ON orders (customer_id)');
+        }
     }
 
     public function down(Schema $schema): void
