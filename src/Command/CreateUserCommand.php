@@ -40,7 +40,8 @@ class CreateUserCommand extends Command
             $io->success('Admin user created: username=admin, password=admin123');
         } else {
             $this->configureStaffAccount($admin, ['ROLE_ADMIN']);
-            $io->info('Admin user already exists, updated roles to ROLE_ADMIN');
+            $this->ensureHashedPassword($admin, 'admin123');
+            $io->info('Admin user already exists; roles and password hash updated if needed');
         }
 
         // Create Staff User
@@ -55,7 +56,8 @@ class CreateUserCommand extends Command
             $io->success('Staff user created: username=staff, password=staff123');
         } else {
             $this->configureStaffAccount($staff, ['ROLE_STAFF']);
-            $io->info('Staff user already exists, updated roles to ROLE_STAFF');
+            $this->ensureHashedPassword($staff, 'staff123');
+            $io->info('Staff user already exists; roles and password hash updated if needed');
         }
 
         // Create Regular User (for testing)
@@ -69,7 +71,8 @@ class CreateUserCommand extends Command
             $this->entityManager->persist($user);
             $io->success('Regular user created: username=user, password=user123');
         } else {
-            $io->info('Regular user already exists');
+            $this->ensureHashedPassword($user, 'user123');
+            $io->info('Regular user already exists; password hash updated if needed');
         }
 
         $this->entityManager->flush();
@@ -95,6 +98,16 @@ class CreateUserCommand extends Command
 
         if ($user->getCreatedAt() === null) {
             $user->setCreatedAt(new \DateTime());
+        }
+    }
+
+    /**
+     * Fix passwords stored as plain text in phpMyAdmin (Symfony requires bcrypt hashes).
+     */
+    private function ensureHashedPassword(User $user, string $plainPassword): void
+    {
+        if (!$this->passwordHasher->isPasswordValid($user, $plainPassword)) {
+            $user->setPassword($this->passwordHasher->hashPassword($user, $plainPassword));
         }
     }
 }

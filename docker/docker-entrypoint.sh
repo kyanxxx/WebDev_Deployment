@@ -43,7 +43,7 @@ if ! php bin/console doctrine:migrations:migrate --no-interaction --allow-no-mig
     echo "If errors persist, reset the Railway MySQL database or run doctrine:migrations:status."
 fi
 
-php bin/console app:create-user --no-interaction 2>/dev/null || echo "NOTE: app:create-user skipped (users may already exist)."
+php bin/console app:create-user --no-interaction || echo "NOTE: app:create-user failed; check deploy logs."
 
 if [ "$APP_ENV" = "prod" ]; then
     php bin/console cache:clear --no-warmup
