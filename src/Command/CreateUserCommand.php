@@ -33,14 +33,13 @@ class CreateUserCommand extends Command
         if (!$admin) {
             $admin = new User();
             $admin->setUsername('admin');
-            $admin->setRoles(['ROLE_ADMIN']);
+            $this->configureStaffAccount($admin, ['ROLE_ADMIN']);
             $hashedPassword = $this->passwordHasher->hashPassword($admin, 'admin123');
             $admin->setPassword($hashedPassword);
             $this->entityManager->persist($admin);
             $io->success('Admin user created: username=admin, password=admin123');
         } else {
-            // Update existing admin to ensure proper role
-            $admin->setRoles(['ROLE_ADMIN']);
+            $this->configureStaffAccount($admin, ['ROLE_ADMIN']);
             $io->info('Admin user already exists, updated roles to ROLE_ADMIN');
         }
 
@@ -49,14 +48,13 @@ class CreateUserCommand extends Command
         if (!$staff) {
             $staff = new User();
             $staff->setUsername('staff');
-            $staff->setRoles(['ROLE_STAFF']);
+            $this->configureStaffAccount($staff, ['ROLE_STAFF']);
             $hashedPassword = $this->passwordHasher->hashPassword($staff, 'staff123');
             $staff->setPassword($hashedPassword);
             $this->entityManager->persist($staff);
             $io->success('Staff user created: username=staff, password=staff123');
         } else {
-            // Update existing staff to ensure proper role
-            $staff->setRoles(['ROLE_STAFF']);
+            $this->configureStaffAccount($staff, ['ROLE_STAFF']);
             $io->info('Staff user already exists, updated roles to ROLE_STAFF');
         }
 
@@ -86,6 +84,18 @@ class CreateUserCommand extends Command
         ]);
 
         return Command::SUCCESS;
+    }
+
+    private function configureStaffAccount(User $user, array $roles): void
+    {
+        $user->setRoles($roles);
+        $user->setStatus('active');
+        $user->setIsVerified(true);
+        $user->setVerificationToken(null);
+
+        if ($user->getCreatedAt() === null) {
+            $user->setCreatedAt(new \DateTime());
+        }
     }
 }
 

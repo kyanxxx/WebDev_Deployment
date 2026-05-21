@@ -19,9 +19,25 @@ final class Version20260324020256 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE user ADD is_verified TINYINT(1) DEFAULT 0 NOT NULL, ADD verification_token VARCHAR(100) DEFAULT NULL');
-        $this->addSql('CREATE UNIQUE INDEX UNIQ_IDENTIFIER_EMAIL ON user (email)');
+        if (!$schema->hasTable('user')) {
+            return;
+        }
+
+        $user = $schema->getTable('user');
+        $changes = [];
+        if (!$user->hasColumn('is_verified')) {
+            $changes[] = 'ADD is_verified TINYINT(1) DEFAULT 0 NOT NULL';
+        }
+        if (!$user->hasColumn('verification_token')) {
+            $changes[] = 'ADD verification_token VARCHAR(100) DEFAULT NULL';
+        }
+        if ($changes !== []) {
+            $this->addSql('ALTER TABLE user '.implode(', ', $changes));
+        }
+
+        if ($user->hasColumn('email') && !$user->hasIndex('UNIQ_IDENTIFIER_EMAIL')) {
+            $this->addSql('CREATE UNIQUE INDEX UNIQ_IDENTIFIER_EMAIL ON user (email)');
+        }
     }
 
     public function down(Schema $schema): void

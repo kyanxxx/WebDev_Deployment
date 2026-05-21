@@ -53,8 +53,11 @@ final class DASHBOARDController extends AbstractController
             // Total records (products + orders)
             $stats['totalRecords'] = $stats['totalProducts'] + $stats['totalOrders'];
             
-            // Recent activities (last 10)
-            $recentActivities = $activityLogRepository->findRecent(10);
+            try {
+                $recentActivities = $activityLogRepository->findRecent(10);
+            } catch (\Throwable) {
+                $recentActivities = [];
+            }
         }
 
         return $this->render('dashboard/index.html.twig', [

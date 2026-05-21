@@ -72,7 +72,7 @@ The Docker image ships `.env.dist` as `.env` so Symfony can boot. Set these **Va
 
 | Variable | Required |
 |----------|----------|
-| `APP_SECRET` | Yes (random string) |
+| `APP_SECRET` | Yes (long random string — empty value causes login/session errors) |
 | `DATABASE_URL` | Yes (from Railway MySQL plugin, e.g. `mysql://user:pass@host:port/railway`) |
 | `JWT_PASSPHRASE` | Yes |
 | `MAILER_DSN` | If using email |
@@ -80,3 +80,7 @@ The Docker image ships `.env.dist` as `.env` so Symfony can boot. Set these **Va
 | `CORS_ALLOW_ORIGIN` | Your Railway URL, e.g. `'^https://webdevdeployment-production\.up\.railway\.app$'` |
 
 `APP_ENV=prod` and `APP_DEBUG=0` are set in the image. Railway’s `PORT` is applied automatically in the entrypoint.
+
+On deploy, `app:create-user` ensures default users exist (`admin` / `admin123`). Change passwords after first login.
+
+If you created an admin manually in phpMyAdmin, ensure the `user` table has a `roles` JSON column (not legacy `role`). After redeploy, migration `Version20260522120000` converts old schemas automatically.
