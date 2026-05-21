@@ -36,6 +36,8 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 COPY --from=composer_deps /app/vendor ./vendor
 COPY --from=frontend /app/public/build ./public/build
 COPY . .
+# Symfony requires a .env file at boot; real secrets come from Railway/Docker env vars
+COPY .env.dist .env
 RUN composer dump-autoload --optimize --no-dev --no-interaction
 
 RUN mkdir -p var/cache var/log config/jwt public/bundles \

@@ -1,6 +1,13 @@
 #!/bin/sh
 set -e
 
+# Railway and similar platforms inject PORT (Apache defaults to 80)
+if [ -n "$PORT" ] && [ "$PORT" != "80" ]; then
+    echo "Configuring Apache to listen on port ${PORT}"
+    sed -i "s/^Listen 80$/Listen ${PORT}/" /etc/apache2/ports.conf
+    sed -i "s/<VirtualHost \*:80>/<VirtualHost *:${PORT}>/" /etc/apache2/sites-enabled/000-default.conf
+fi
+
 mkdir -p var/cache var/log config/jwt
 chown -R www-data:www-data var config/jwt 2>/dev/null || true
 

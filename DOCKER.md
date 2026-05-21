@@ -62,6 +62,21 @@ Add your Docker app URL to Google Cloud Console authorized redirect URIs, for ex
 ## Production notes
 
 - Set strong values for `APP_SECRET`, `MYSQL_*`, and `JWT_PASSPHRASE`.
-- Do not commit `.env` with real secrets.
+- Do not commit `.env` with real secrets (use `.env.dist` in the image + platform env vars).
 - Put a reverse proxy (TLS) in front of the `app` service for public deployment.
 - Consider `APP_ENV=prod` and `APP_DEBUG=0` (defaults in Compose).
+
+## Railway
+
+The Docker image ships `.env.dist` as `.env` so Symfony can boot. Set these **Variables** in the Railway service (they override the file):
+
+| Variable | Required |
+|----------|----------|
+| `APP_SECRET` | Yes (random string) |
+| `DATABASE_URL` | Yes (from Railway MySQL plugin, e.g. `mysql://user:pass@host:port/railway`) |
+| `JWT_PASSPHRASE` | Yes |
+| `MAILER_DSN` | If using email |
+| `OAUTH_GOOGLE_CLIENT_ID` / `OAUTH_GOOGLE_CLIENT_SECRET` | If using Google login |
+| `CORS_ALLOW_ORIGIN` | Your Railway URL, e.g. `'^https://webdevdeployment-production\.up\.railway\.app$'` |
+
+`APP_ENV=prod` and `APP_DEBUG=0` are set in the image. Railway’s `PORT` is applied automatically in the entrypoint.
