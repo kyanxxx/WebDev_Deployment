@@ -52,4 +52,10 @@ php bin/console assets:install public --no-interaction
 
 chown -R www-data:www-data var public/bundles 2>/dev/null || true
 
+# mod_php requires prefork; ensure no other MPM is enabled (AH00534)
+for mpm in mpm_event mpm_worker; do
+    a2dismod "$mpm" 2>/dev/null || rm -f "/etc/apache2/mods-enabled/${mpm}.load" "/etc/apache2/mods-enabled/${mpm}.conf"
+done
+a2enmod mpm_prefork 2>/dev/null || true
+
 exec docker-php-entrypoint "$@"

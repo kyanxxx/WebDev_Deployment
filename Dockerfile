@@ -23,7 +23,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libzip-dev \
     && docker-php-ext-configure intl \
     && docker-php-ext-install -j"$(nproc)" intl opcache pdo_mysql zip \
-    && a2enmod rewrite headers \
+    && for mpm in mpm_event mpm_worker; do \
+        a2dismod "$mpm" 2>/dev/null || rm -f "/etc/apache2/mods-enabled/${mpm}.load" "/etc/apache2/mods-enabled/${mpm}.conf"; \
+    done \
+    && a2enmod mpm_prefork rewrite headers \
+    && apache2ctl configtest \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
