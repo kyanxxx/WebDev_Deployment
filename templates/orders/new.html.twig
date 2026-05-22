@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Create New Order{% endblock %}
+
+{% block page_title %}Create New Order{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/products.css') }}">
+    <style>
+        .product-form-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 24px 24px 40px;
+            min-height: auto;
+            display: block;
+        }
+
+        .form-card {
+            max-width: 100%;
+            width: 100%;
+            padding: 40px 60px;
+            margin: 0 auto;
+        }
+
+        .main {
+            overflow-y: auto !important;
+            padding-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #6b4e31;
+            box-shadow: 0 0 0 2px rgba(107, 78, 49, 0.1);
+        }
+
+        select.form-control {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 40px;
+        }
+
+        .form-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .product-form-container {
+                padding: 16px;
+            }
+
+            .form-card {
+                padding: 24px 18px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block main_content %}
+<div class="product-form-container">
+    <div class="form-card">
+        <div class="form-header">
+            <h1>☕ Create Order</h1>
+            <p style="color: #666; margin-top: -24px;">Select a menu item and quantity to place a new order.</p>
+        </div>
+
+        {{ form_start(form) }}
+            <div class="form-group">
+                <label for="order_product">Product:</label>
+                {{ form_widget(form.product, {'attr': {'id': 'order_product', 'class': 'form-control'}}) }}
+                {{ form_errors(form.product) }}
+            </div>
+
+            <div class="form-group">
+                <label for="order_quantity">Quantity:</label>
+                {{ form_widget(form.quantity, {'attr': {'id': 'order_quantity', 'class': 'form-control'}}) }}
+                {{ form_errors(form.quantity) }}
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-success">💾 Place Order</button>
+                <a href="{{ path('app_products_index') }}" class="btn btn-secondary">← Back to menu</a>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}

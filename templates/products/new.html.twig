@@ -1,6 +1,8 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Create New Order{% endblock %}
+{% block title %}Add New Product{% endblock %}
+
+{% block page_title %}Add New Product{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }} {# include base stylesheets #}
@@ -196,7 +198,7 @@
 <div class="product-form-container">
     <div class="form-card">
         <div class="form-header">
-            <h1>☕ Order Product</h1>
+            <h1>☕ Add Menu Product</h1>
         </div>
 
         {{ form_start(form) }}

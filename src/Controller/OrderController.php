@@ -92,7 +92,7 @@ class OrderController extends AbstractController
     }
 
 
-        return $this->render('products/new.html.twig', [
+        return $this->render('orders/new.html.twig', [
             'form' => $form,
         ]);
     }

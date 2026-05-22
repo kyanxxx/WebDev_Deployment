@@ -48,7 +48,8 @@ final class ProductsController extends AbstractController
     }
 
     #[Route('/new', name: 'app_products_new', methods: ['GET', 'POST'])]
-            public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[IsGranted(new Expression("is_granted('ROLE_ADMIN') or is_granted('ROLE_STAFF')"), message: 'Access Denied. The user doesn\'t have any of ROLE_ADMIN, ROLE_STAFF.')]
+    public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $product = new Products();
         $form = $this->createForm(ProductsType::class, $product);

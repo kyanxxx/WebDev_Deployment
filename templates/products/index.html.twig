@@ -270,7 +270,12 @@
 {% block main_content %}
     <div class="products-header">
         <h1>☕ Order Now</h1>
-        <a href="{{ path('app_products_new') }}" class="btn btn-primary">＋ Create New</a>
+        {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_STAFF') %}
+            <a href="{{ path('app_orders_new') }}" class="btn btn-primary">＋ Create Order</a>
+            <a href="{{ path('app_products_new') }}" class="btn btn-secondary" style="margin-left: 10px;">＋ Add Product</a>
+        {% else %}
+            <a href="{{ path('app_products_menu') }}" class="btn btn-primary">View Menu</a>
+        {% endif %}
     </div>
 
     {% if searchQuery is defined and searchQuery is not empty %}
