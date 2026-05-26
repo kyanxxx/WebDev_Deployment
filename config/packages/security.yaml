@@ -52,6 +52,7 @@ security:
         # Public routes (accessible to everyone, including unauthenticated)
         
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
+        - { path: ^/api/login/google, roles: PUBLIC_ACCESS }
         - { path: ^/api/register, roles: PUBLIC_ACCESS }
         - { path: ^/api, roles: IS_AUTHENTICATED }
         
