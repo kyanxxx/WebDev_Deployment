@@ -2,9 +2,7 @@
 
 namespace App\Controller;
 
-use App\Repository\ActivityLogRepository;
 use App\Repository\TransactionRepository;
-use App\Service\MobilePushNotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\ExpressionLanguage\Expression;
@@ -32,8 +30,6 @@ class TransactionHistoryController extends AbstractController
     public function done(
         Request $request,
         EntityManagerInterface $entityManager,
-        ActivityLogRepository $activityLogRepository,
-        MobilePushNotificationService $mobilePushNotificationService,
         \App\Entity\Transaction $transaction
     ): RedirectResponse {
         if (!$this->isCsrfTokenValid('transaction_done_' . $transaction->getId(), (string) $request->request->get('_token'))) {
@@ -50,17 +46,6 @@ class TransactionHistoryController extends AbstractController
             }
 
             $entityManager->flush();
-
-            if (null !== $order) {
-                try {
-                    $customer = $activityLogRepository->findLatestCustomerForOrderId((int) $order->getId());
-                    if (null !== $customer) {
-                        $mobilePushNotificationService->sendOrderReadyNotification($customer, (int) $order->getId());
-                    }
-                } catch (\Throwable) {
-                    // Do not block DONE action when push-notification infrastructure is not ready.
-                }
-            }
 
             $this->addFlash('success', 'Order marked as done.');
         } else {
