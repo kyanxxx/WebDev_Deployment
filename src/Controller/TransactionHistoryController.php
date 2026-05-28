@@ -52,9 +52,13 @@ class TransactionHistoryController extends AbstractController
             $entityManager->flush();
 
             if (null !== $order) {
-                $customer = $activityLogRepository->findLatestCustomerForOrderId((int) $order->getId());
-                if (null !== $customer) {
-                    $mobilePushNotificationService->sendOrderReadyNotification($customer, (int) $order->getId());
+                try {
+                    $customer = $activityLogRepository->findLatestCustomerForOrderId((int) $order->getId());
+                    if (null !== $customer) {
+                        $mobilePushNotificationService->sendOrderReadyNotification($customer, (int) $order->getId());
+                    }
+                } catch (\Throwable) {
+                    // Do not block DONE action when push-notification infrastructure is not ready.
                 }
             }
 
