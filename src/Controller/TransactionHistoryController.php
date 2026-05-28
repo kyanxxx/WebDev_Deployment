@@ -39,6 +39,12 @@ class TransactionHistoryController extends AbstractController
 
         if (strtoupper((string) $transaction->getStatus()) === 'SERVING') {
             $transaction->setStatus('SERVED');
+
+            $order = $transaction->getOrder();
+            if (null !== $order && strtoupper((string) $order->getStatus()) !== 'SERVED') {
+                $order->setStatus('SERVED');
+            }
+
             $entityManager->flush();
             $this->addFlash('success', 'Order marked as done.');
         } else {
