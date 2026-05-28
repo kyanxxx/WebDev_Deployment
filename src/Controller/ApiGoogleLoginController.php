@@ -21,6 +21,8 @@ class ApiGoogleLoginController extends AbstractController
         private JWTTokenManagerInterface $jwtManager,
         #[Autowire('%env(OAUTH_GOOGLE_CLIENT_ID)%')]
         private string $googleClientId,
+        #[Autowire('%env(default::GOOGLE_MOBILE_CLIENT_ID)%')]
+        private string $googleMobileClientId = '',
     ) {
     }
 
@@ -74,7 +76,8 @@ class ApiGoogleLoginController extends AbstractController
         /** @var array<string, mixed> $payload */
         $payload = $response->toArray();
 
-        if ($this->googleClientId !== '' && isset($payload['aud']) && $payload['aud'] !== $this->googleClientId) {
+        $audience = $payload['aud'] ?? '';
+        if ($this->googleClientId !== '' && $audience !== $this->googleClientId && !$this->isAllowedAudience((string) $audience)) {
             throw new \InvalidArgumentException('Google token audience does not match this app');
         }
 
@@ -95,5 +98,18 @@ class ApiGoogleLoginController extends AbstractController
         $roles = $user->getRoles();
 
         return in_array('ROLE_ADMIN', $roles, true) || in_array('ROLE_STAFF', $roles, true);
+    }
+
+    private function isAllowedAudience(string $audience): bool
+    {
+        if ($audience === '') {
+            return false;
+        }
+
+        if ($this->googleMobileClientId !== '' && $audience === $this->googleMobileClientId) {
+            return true;
+        }
+
+        return false;
     }
 }
