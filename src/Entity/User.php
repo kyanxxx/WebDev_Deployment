@@ -50,6 +50,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 20, options: ['default' => 'active'])]
     private ?string $status = 'active';
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $mobilePushToken = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -195,6 +198,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function isArchived(): bool
     {
         return $this->status === 'archived';
+    }
+
+    public function getMobilePushToken(): ?string
+    {
+        return $this->mobilePushToken;
+    }
+
+    public function setMobilePushToken(?string $mobilePushToken): static
+    {
+        $this->mobilePushToken = $mobilePushToken;
+
+        return $this;
     }
 
     /**

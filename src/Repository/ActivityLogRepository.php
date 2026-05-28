@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\ActivityLog;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -52,6 +53,29 @@ class ActivityLogRepository extends ServiceEntityRepository
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
+    }
+
+    public function findLatestCustomerForOrderId(int $orderId): ?User
+    {
+        $log = $this->createQueryBuilder('a')
+            ->andWhere('a.entityType = :entityType')
+            ->andWhere('a.entityId = :entityId')
+            ->andWhere('a.action = :action')
+            ->andWhere('a.userRole = :userRole')
+            ->setParameter('entityType', 'Orders')
+            ->setParameter('entityId', $orderId)
+            ->setParameter('action', 'CREATE')
+            ->setParameter('userRole', 'ROLE_USER')
+            ->orderBy('a.id', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if (!$log instanceof ActivityLog) {
+            return null;
+        }
+
+        return $log->getUser();
     }
 }
 
